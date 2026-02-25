@@ -304,7 +304,7 @@ export default function App() {
                       ) : horariosDisponiveis.length === 0 ? (
                         <p className="text-xs text-red-400 text-center py-4 bg-red-50 rounded border border-red-100">Não há horários neste dia.</p>
                       ) : (
-                        <div className="grid grid-cols-3 gap-2">
+                        <div className="grid grid-cols-3 gap-2 max-h-[140px] overflow-y-auto custom-scrollbar pr-1">
                           {horariosDisponiveis.map((hora) => (
                             <button
                               key={hora} type="button" onClick={() => setFormAgenda({...formAgenda, horario: hora})}

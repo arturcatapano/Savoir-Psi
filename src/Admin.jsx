@@ -3,6 +3,7 @@ import { supabase } from './supabase'
 import { Trash2, CheckCircle, MessageCircle, Calendar, Clock, User, Filter, LogOut, Settings, Plus, LayoutDashboard, Edit, X } from 'lucide-react'
 
 export default function Admin() {
+  const [carregandoSessao, setCarregandoSessao] = useState(true) // <--- ESTADO DO F5
   const [autenticado, setAutenticado] = useState(false)
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
@@ -12,61 +13,66 @@ export default function Admin() {
   const [agendamentos, setAgendamentos] = useState([])
   const [loadingAgendamentos, setLoadingAgendamentos] = useState(true)
   
-  const [listaPsicologos, setListaPsicologos] = useState([])
   const [filtroPsi, setFiltroPsi] = useState('Todos')
   const [isPsiFixo, setIsPsiFixo] = useState(false)
 
   const [modalAgendaAberto, setModalAgendaAberto] = useState(false)
   const [editingAgendamentoId, setEditingAgendamentoId] = useState(null)
-  const [formManual, setFormManual] = useState({ nome_paciente: '', telefone_paciente: '', psicologo_id: '', data_agendamento: '', horario: '', status: 'pendente' })
+  const [formManual, setFormManual] = useState({ nome_paciente: '', telefone_paciente: '', psicologa: '', data_agendamento: '', horario: '', status: 'pendente' })
 
   const [configuracoes, setConfiguracoes] = useState([])
   const [loadingConfigs, setLoadingConfigs] = useState(true)
   const [editingConfigId, setEditingConfigId] = useState(null)
-  const [formConfig, setFormConfig] = useState({ psicologo_id: '', dia_semana: '1', hora_inicio: '18:00', hora_fim: '21:00' })
+  const [formConfig, setFormConfig] = useState({ psicologa: '', dia_semana: '1', hora_inicio: '18:00', hora_fim: '21:00' })
 
   const nomesDias = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']
 
+  // --- MAPEAMENTO SEGURO DE E-MAILS (SEM RELAÇÃO DE BANCO) ---
+  const getPsiByEmail = (userEmail) => {
+    if (userEmail === 'lucas@savoir.com') return 'Psi. Lucas Barba'
+    if (userEmail === 'amanda@savoir.com') return 'Psi. Amanda Pierot'
+    if (userEmail === 'alini@savoir.com') return 'Psi. Alini Correia'
+    if (userEmail === 'karina@savoir.com') return 'Psi. Karina Catapano'
+    return 'Todos'
+  }
+
+  // --- VERIFICAÇÃO DE SESSÃO COM TELA DE LOADING ---
   useEffect(() => {
-    const carregarSistema = async () => {
-      const { data: psis } = await supabase.from('psicologos').select('*')
-      if (psis) setListaPsicologos(psis)
-
+    const restaurarSessao = async () => {
       const { data: { session } } = await supabase.auth.getSession()
-      if (session && psis) configurarUsuario(session.user, psis)
-    }
-    carregarSistema()
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session) {
-        const { data: psis } = await supabase.from('psicologos').select('*')
-        configurarUsuario(session.user, psis || listaPsicologos)
+        configurarUsuario(session.user)
+      }
+      setCarregandoSessao(false) // Tira a tela de Verificando acesso
+    }
+
+    restaurarSessao()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        configurarUsuario(session.user)
       } else {
         setAutenticado(false)
+        setUsuarioAtual(null)
       }
     })
 
     return () => subscription.unsubscribe()
   }, [])
 
-  const configurarUsuario = (user, psis) => {
+  const configurarUsuario = (user) => {
     setUsuarioAtual(user)
     setAutenticado(true)
     
-    const psiVinculado = psis.find(p => p.email === user.email)
-    
-    if (psiVinculado) {
-      setFiltroPsi(psiVinculado.id)
-      setIsPsiFixo(true)
-    } else {
-      setFiltroPsi('Todos')
-      setIsPsiFixo(false)
-    }
+    const psiVinculado = getPsiByEmail(user.email)
+    setFiltroPsi(psiVinculado)
+    setIsPsiFixo(psiVinculado !== 'Todos')
 
     buscarAgendamentos()
     buscarConfiguracoes()
   }
 
+  // --- LOGIN E LOGOUT ---
   const handleLogin = async (e) => {
     e.preventDefault()
     const { error } = await supabase.auth.signInWithPassword({ email, password: senha })
@@ -79,6 +85,7 @@ export default function Admin() {
     setSenha('')
   }
 
+  // --- BUSCAR DADOS ---
   const buscarAgendamentos = async () => {
     setLoadingAgendamentos(true)
     const { data, error } = await supabase.from('agendamentos').select('*').order('data_agendamento', { ascending: true })
@@ -93,6 +100,7 @@ export default function Admin() {
     setLoadingConfigs(false)
   }
 
+  // --- AÇÕES DE AGENDAMENTO ---
   const handleConfirmar = async (id) => {
     await supabase.from('agendamentos').update({ status: 'confirmado' }).eq('id', id)
     buscarAgendamentos()
@@ -109,7 +117,7 @@ export default function Admin() {
     setEditingAgendamentoId(null)
     setFormManual({ 
       nome_paciente: '', telefone_paciente: '', 
-      psicologo_id: isPsiFixo ? filtroPsi : '', 
+      psicologa: isPsiFixo ? filtroPsi : '', 
       data_agendamento: '', horario: '', status: 'confirmado' 
     })
     setModalAgendaAberto(true)
@@ -123,65 +131,51 @@ export default function Admin() {
 
   const handleSalvarAgendamentoManual = async (e) => {
     e.preventDefault()
-    
-    const psiSelecionado = listaPsicologos.find(p => p.id === formManual.psicologo_id)
-    const dadosEnvio = { ...formManual, psicologa: psiSelecionado?.nome }
-
     if (editingAgendamentoId) {
-      const {error} = await supabase.from('agendamentos').update(dadosEnvio).eq('id', editingAgendamentoId)
-      if(error) alert(error.message)
+      await supabase.from('agendamentos').update(formManual).eq('id', editingAgendamentoId)
     } else {
-      const {error} = await supabase.from('agendamentos').insert([dadosEnvio])
-      if(error) alert(error.message)
+      await supabase.from('agendamentos').insert([formManual])
     }
     setModalAgendaAberto(false)
     buscarAgendamentos()
   }
 
+  // --- AÇÕES DE CONFIGURAÇÃO ---
   const handleSalvarConfig = async (e) => {
     e.preventDefault()
-    const idSelecionado = isPsiFixo ? filtroPsi : formConfig.psicologo_id
-    if (!idSelecionado) return alert('Escolha um profissional!')
+    const psiSelecionada = isPsiFixo ? filtroPsi : formConfig.psicologa
+    if (!psiSelecionada) return alert('Escolha um profissional!')
 
     const { data: turnosExistentes } = await supabase.from('config_agenda').select('id')
-      .eq('psicologo_id', idSelecionado).eq('dia_semana', parseInt(formConfig.dia_semana))
+      .eq('psicologa', psiSelecionada).eq('dia_semana', parseInt(formConfig.dia_semana))
 
     if (turnosExistentes.length > 0 && (!editingConfigId || turnosExistentes[0].id !== editingConfigId)) {
-      return alert('Já existe um turno neste dia da semana para este profissional!')
-    }
-
-    const psiDb = listaPsicologos.find(p => p.id === idSelecionado)
-    const dadosTurno = {
-      psicologo_id: idSelecionado,
-      psicologa: psiDb.nome,
-      dia_semana: parseInt(formConfig.dia_semana), 
-      hora_inicio: formConfig.hora_inicio, 
-      hora_fim: formConfig.hora_fim, 
-      duracao_minutos: 50
+      return alert('Este profissional já possui um turno cadastrado neste dia da semana! Edite o turno existente.')
     }
 
     if (editingConfigId) {
-      const { error } = await supabase.from('config_agenda').update(dadosTurno).eq('id', editingConfigId)
-      if (error) { alert('Erro ao atualizar: ' + error.message); return; }
+      await supabase.from('config_agenda').update({
+        dia_semana: parseInt(formConfig.dia_semana), hora_inicio: formConfig.hora_inicio, hora_fim: formConfig.hora_fim
+      }).eq('id', editingConfigId)
     } else {
-      const { error } = await supabase.from('config_agenda').insert([dadosTurno])
-      if (error) { alert('Erro ao salvar: ' + error.message); return; }
+      await supabase.from('config_agenda').insert([{
+        psicologa: psiSelecionada, dia_semana: parseInt(formConfig.dia_semana), hora_inicio: formConfig.hora_inicio, hora_fim: formConfig.hora_fim, duracao_minutos: 50
+      }])
     }
 
-    alert('Turno salvo com sucesso!')
     setEditingConfigId(null)
-    setFormConfig({ psicologo_id: '', dia_semana: '1', hora_inicio: '18:00', hora_fim: '21:00' })
+    setFormConfig({ psicologa: '', dia_semana: '1', hora_inicio: '18:00', hora_fim: '21:00' })
     buscarConfiguracoes()
   }
 
   const iniciarEdicaoConfig = (item) => {
     setEditingConfigId(item.id)
-    setFormConfig({ psicologo_id: item.psicologo_id, dia_semana: item.dia_semana.toString(), hora_inicio: item.hora_inicio, hora_fim: item.hora_fim })
+    setFormConfig({ psicologa: item.psicologa, dia_semana: item.dia_semana.toString(), hora_inicio: item.hora_inicio, hora_fim: item.hora_fim })
   }
 
   const cancelarEdicaoConfig = () => {
     setEditingConfigId(null)
-    setFormConfig({ psicologo_id: '', dia_semana: '1', hora_inicio: '18:00', hora_fim: '21:00' })
+    setFormConfig({ psicologa: '', dia_semana: '1', hora_inicio: '18:00', hora_fim: '21:00' })
   }
 
   const handleDeletarConfig = async (id) => {
@@ -191,10 +185,23 @@ export default function Admin() {
     }
   }
 
-  const listaAgendamentosFiltrada = filtroPsi === 'Todos' ? agendamentos : agendamentos.filter(item => item.psicologo_id === filtroPsi)
-  const listaConfigsFiltrada = filtroPsi === 'Todos' ? configuracoes : configuracoes.filter(item => item.psicologo_id === filtroPsi)
+  const listaAgendamentosFiltrada = filtroPsi === 'Todos' ? agendamentos : agendamentos.filter(item => item.psicologa === filtroPsi)
+  const listaConfigsFiltrada = filtroPsi === 'Todos' ? configuracoes : configuracoes.filter(item => item.psicologa === filtroPsi)
 
-  const getNomePsi = (id) => listaPsicologos.find(p => p.id === id)?.nome || 'Profissional'
+  // ========================================================================
+  // INTERFACES
+  // ========================================================================
+  
+  // TELA DE CARREGAMENTO DO F5
+  if (carregandoSessao) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-savoir-navy text-white">
+        <div className="flex flex-col items-center gap-4">
+          <p className="animate-pulse text-savoir-gold font-serif text-2xl italic tracking-wider">Verificando acesso...</p>
+        </div>
+      </div>
+    )
+  }
 
   if (!autenticado) {
     return (
@@ -235,11 +242,12 @@ export default function Admin() {
             )}
             <div className="flex items-center gap-2 w-full md:w-auto">
               <Filter size={18} className="text-gray-400"/>
-              <select className="bg-gray-50 border border-gray-200 text-sm p-2 rounded-lg outline-none focus:border-savoir-gold w-full md:w-auto disabled:opacity-50" value={filtroPsi} onChange={e => setFiltroPsi(e.target.value)} disabled={isPsiFixo}>
+              <select className="bg-gray-50 border border-gray-200 text-sm p-2 rounded-lg outline-none focus:border-savoir-gold w-full md:w-auto disabled:opacity-50 disabled:bg-gray-200" value={filtroPsi} onChange={e => setFiltroPsi(e.target.value)} disabled={isPsiFixo}>
                 <option value="Todos">Visão Geral (Todos)</option>
-                {listaPsicologos.map(p => (
-                  <option key={p.id} value={p.id}>{p.nome}</option>
-                ))}
+                <option value="Psi. Lucas Barba">Psi. Lucas Barba</option>
+                <option value="Psi. Amanda Pierot">Psi. Amanda Pierot</option>
+                <option value="Psi. Alini Correia">Psi. Alini Correia</option>
+                <option value="Psi. Karina Catapano">Psi. Karina Catapano</option>
               </select>
             </div>
           </div>
@@ -254,11 +262,11 @@ export default function Admin() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${item.status === 'confirmado' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{item.status || 'Pendente'}</span>
-                        <span className="text-xs text-gray-400 flex items-center gap-1"><Clock size={12}/> {new Date(item.created_at).toLocaleDateString()}</span>
+                        <span className="text-xs text-gray-400 flex items-center gap-1"><Clock size={12}/> Recebido em {new Date(item.created_at).toLocaleDateString()}</span>
                       </div>
                       <h3 className="text-lg font-bold text-savoir-navy flex items-center gap-2">{item.nome_paciente}</h3>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2 text-sm text-gray-600">
-                        <p className="flex items-center gap-1"><User size={14} className="text-savoir-gold"/> {getNomePsi(item.psicologo_id)}</p>
+                        <p className="flex items-center gap-1"><User size={14} className="text-savoir-gold"/> {item.psicologa}</p>
                         <p className="flex items-center gap-1"><Calendar size={14} className="text-savoir-gold"/> {new Date(item.data_agendamento + 'T00:00:00').toLocaleDateString()}</p>
                         <p className="flex items-center gap-1"><Clock size={14} className="text-savoir-gold"/> {item.horario}</p>
                       </div>
@@ -288,9 +296,12 @@ export default function Admin() {
                 {!isPsiFixo && (
                   <div>
                     <label className="block text-gray-600 font-bold mb-1">Profissional:</label>
-                    <select required className="w-full border p-2 rounded bg-white outline-none focus:border-savoir-gold disabled:opacity-50" disabled={editingConfigId !== null} value={formConfig.psicologo_id} onChange={e => setFormConfig({...formConfig, psicologo_id: e.target.value})}>
+                    <select required className="w-full border p-2 rounded bg-white outline-none focus:border-savoir-gold disabled:opacity-50" disabled={editingConfigId !== null} value={formConfig.psicologa} onChange={e => setFormConfig({...formConfig, psicologa: e.target.value})}>
                       <option value="">Selecione...</option>
-                      {listaPsicologos.map(p => <option key={p.id} value={p.id}>{p.nome}</option>)}
+                      <option value="Psi. Lucas Barba">Psi. Lucas Barba</option>
+                      <option value="Psi. Amanda Pierot">Psi. Amanda Pierot</option>
+                      <option value="Psi. Alini Correia">Psi. Alini Correia</option>
+                      <option value="Psi. Karina Catapano">Psi. Karina Catapano</option>
                     </select>
                   </div>
                 )}
@@ -315,7 +326,7 @@ export default function Admin() {
                   {listaConfigsFiltrada.map((item) => (
                     <div key={item.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center hover:shadow-md transition">
                       <div>
-                        <p className="font-bold text-savoir-navy">{getNomePsi(item.psicologo_id)}</p>
+                        <p className="font-bold text-savoir-navy">{item.psicologa}</p>
                         <div className="flex items-center gap-3 text-sm text-gray-600 mt-1">
                           <span className="bg-savoir-light px-2 py-1 rounded text-savoir-gold font-bold">{nomesDias[item.dia_semana]}</span>
                           <span className="flex items-center gap-1"><Clock size={14}/> {item.hora_inicio} às {item.hora_fim}</span>
@@ -346,9 +357,12 @@ export default function Admin() {
               {!isPsiFixo && (
                 <div>
                   <label className="text-xs font-bold text-gray-500 uppercase">Profissional</label>
-                  <select required className="w-full border-b border-gray-300 p-2 outline-none focus:border-savoir-gold bg-transparent" value={formManual.psicologo_id} onChange={e => setFormManual({...formManual, psicologo_id: e.target.value})}>
+                  <select required className="w-full border-b border-gray-300 p-2 outline-none focus:border-savoir-gold bg-transparent" value={formManual.psicologa} onChange={e => setFormManual({...formManual, psicologa: e.target.value})}>
                     <option value="">Selecione...</option>
-                    {listaPsicologos.map(p => <option key={p.id} value={p.id}>{p.nome}</option>)}
+                    <option value="Psi. Lucas Barba">Psi. Lucas Barba</option>
+                    <option value="Psi. Amanda Pierot">Psi. Amanda Pierot</option>
+                    <option value="Psi. Alini Correia">Psi. Alini Correia</option>
+                    <option value="Psi. Karina Catapano">Psi. Karina Catapano</option>
                   </select>
                 </div>
               )}
