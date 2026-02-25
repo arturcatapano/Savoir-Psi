@@ -12,14 +12,12 @@ export default function App() {
   const [horariosDisponiveis, setHorariosDisponiveis] = useState([])
   const [statusHorarios, setStatusHorarios] = useState('idle')
 
-  // Estado para guardar os IDs reais do banco de dados
   const [psicologosDB, setPsicologosDB] = useState([])
 
   const amanha = new Date();
   amanha.setDate(amanha.getDate() + 1);
   const dataMinima = amanha.toISOString().split('T')[0];
 
-  // BUSCA OS IDs DOS PSICÓLOGOS NO BANCO AO ABRIR O SITE
   useEffect(() => {
     const fetchPsi = async () => {
       const { data } = await supabase.from('psicologos').select('*')
@@ -28,7 +26,6 @@ export default function App() {
     fetchPsi()
   }, [])
 
-  // MÁQUINA MATEMÁTICA DE HORÁRIOS (AGORA USANDO ID)
   useEffect(() => {
     const calcularHorariosDisponiveis = async () => {
       if (!formAgenda.data || !selectedPsi || psicologosDB.length === 0) return;
@@ -43,7 +40,6 @@ export default function App() {
         const dataObj = new Date(formAgenda.data + 'T12:00:00')
         const diaSemana = dataObj.getDay()
 
-        // Busca a configuração usando o ID relacional
         const { data: configTurno, error: erroConfig } = await supabase
           .from('config_agenda')
           .select('*')
@@ -71,7 +67,6 @@ export default function App() {
           tempoAtualEmMinutos += duracaoSessao
         }
 
-        // Busca agendamentos ocupados pelo ID
         const { data: agendados } = await supabase
           .from('agendamentos')
           .select('horario')
@@ -117,12 +112,11 @@ export default function App() {
 
     const psiDb = psicologosDB.find(p => p.nome === selectedPsi.nome)
 
-    // Tenta inserir. Se a trava do banco bloquear (dois clicando juntos), ele cai no erro.
     const { error } = await supabase.from('agendamentos').insert([{
       nome_paciente: formAgenda.nome,
       telefone_paciente: formAgenda.telefone,
-      psicologa: selectedPsi.nome, // Mantemos por garantia de leitura fácil
-      psicologo_id: psiDb.id, // A RELAÇÃO REAL
+      psicologa: selectedPsi.nome,
+      psicologo_id: psiDb.id,
       data_agendamento: formAgenda.data,
       horario: formAgenda.horario
     }])
@@ -130,7 +124,6 @@ export default function App() {
     if (error) {
       alert('Horário indisponível! Outra pessoa pode ter agendado neste exato momento. Por favor, escolha outro horário.')
       setStatusAgenda('idle')
-      // Força a recarregar a data para atualizar os botões
       setFormAgenda(prev => ({ ...prev, data: '' })) 
     } else {
       setStatusAgenda('success')
@@ -138,7 +131,6 @@ export default function App() {
     }
   }
 
-  // --- DADOS VISUAIS DA EQUIPE ---
   const equipe = [
     {
       nome: "Psi. Lucas Barba", crp: "06/145904", especialidade: "Sexologia & Saúde Pública", foto: "/lucas.jpeg", link: "https://wa.me/5511999999999",
@@ -258,6 +250,8 @@ export default function App() {
         <div className="max-w-6xl mx-auto text-center">
             <h2 className="text-2xl font-serif italic text-savoir-gold mb-4">Savoir Psi</h2>
             <p className="opacity-70 text-sm">Escuta, elaboração e transformação.</p>
+            <p className="opacity-70 text-sm mt-2">Av. Tucuruvi, 654 - São Paulo, SP</p>
+            <a href="/admin" className="inline-flex items-center gap-2 mt-6 text-xs opacity-50 hover:opacity-100 transition-opacity"><Lock size={12}/> Acesso Profissional</a>
         </div>
       </footer>
 
@@ -276,7 +270,7 @@ export default function App() {
               <h3 className="text-xl font-serif text-savoir-navy mb-1 leading-tight text-center">{selectedPsi.nome}</h3>
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-6">CRP {selectedPsi.crp}</p>
               
-              <div className="w-full bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex-1">
+              <div className="w-full bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex-1 flex flex-col">
                 <h4 className="font-bold text-savoir-navy mb-4 flex items-center gap-2 text-sm justify-center"><Calendar size={16} className="text-savoir-gold"/> Agendar Sessão</h4>
 
                 {statusAgenda === 'success' ? (
@@ -286,7 +280,7 @@ export default function App() {
                     <p className="text-xs text-gray-500 mt-1">A clínica confirmará via WhatsApp.</p>
                   </div>
                 ) : (
-                  <form onSubmit={handleAgendar} className="flex flex-col gap-3 text-left">
+                  <form onSubmit={handleAgendar} className="flex flex-col gap-3 text-left flex-1">
                     <input required type="text" placeholder="Seu Nome Completo" className="w-full p-2 text-sm border rounded bg-gray-50 focus:border-savoir-gold focus:outline-none transition" value={formAgenda.nome} onChange={e => setFormAgenda({...formAgenda, nome: e.target.value})} />
                     <input required type="tel" placeholder="WhatsApp (Ex: 11999999999)" className="w-full p-2 text-sm border rounded bg-gray-50 focus:border-savoir-gold focus:outline-none transition" value={formAgenda.telefone} onChange={e => setFormAgenda({...formAgenda, telefone: e.target.value})} />
                     
@@ -294,7 +288,8 @@ export default function App() {
                       <input required type="date" min={dataMinima} className="w-full p-2 text-sm border rounded bg-gray-50 focus:border-savoir-gold focus:outline-none text-gray-600 transition" value={formAgenda.data} onChange={e => setFormAgenda({...formAgenda, data: e.target.value})} />
                     </div>
                     
-                    <div className="mt-2 min-h-[100px] border border-gray-100 rounded-lg p-3 bg-gray-50/50">
+                    {/* ÁREA DOS HORÁRIOS COM SCROLL */}
+                    <div className="mt-2 flex-1 border border-gray-100 rounded-lg p-3 bg-gray-50/50 flex flex-col">
                       <label className="text-xs font-bold text-gray-500 uppercase flex items-center gap-1 mb-2"><Clock size={12}/> Horários Disponíveis</label>
                       
                       {!formAgenda.data ? (
@@ -304,7 +299,7 @@ export default function App() {
                       ) : horariosDisponiveis.length === 0 ? (
                         <p className="text-xs text-red-400 text-center py-4 bg-red-50 rounded border border-red-100">Não há horários neste dia.</p>
                       ) : (
-                        <div className="grid grid-cols-3 gap-2">
+                        <div className="grid grid-cols-3 gap-2 max-h-[140px] overflow-y-auto custom-scrollbar pr-1">
                           {horariosDisponiveis.map((hora) => (
                             <button
                               key={hora} type="button" onClick={() => setFormAgenda({...formAgenda, horario: hora})}
