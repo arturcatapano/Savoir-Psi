@@ -1,0 +1,23 @@
+/* Importando as fontes elegantes */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Estilos Globais */
+body {
+  background-color: #F4F1EA;
+  color: #2D3436;
+  font-family: 'Lato', sans-serif;
+  overflow-x: hidden; /* Evita rolagem lateral indesejada */
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Playfair Display', serif;
+}
+
+/* Classe personalizada para botões */
+.btn-gold {
+  @apply bg-[#C5A880] text-white px-6 py-3 rounded-md font-bold uppercase tracking-wider text-sm hover:bg-[#b09268] transition-all duration-300 shadow-md;
+}
