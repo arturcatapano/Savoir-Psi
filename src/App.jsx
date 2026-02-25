@@ -28,34 +28,39 @@ export default function App() {
     fetchPsi()
   }, [])
 
-  // MÁQUINA MATEMÁTICA DE HORÁRIOS (AGORA USANDO ID)
+// =========================================================================
+  // A MÁQUINA MATEMÁTICA DE HORÁRIOS (AGORA À PROVA DE ERROS 406)
+  // =========================================================================
   useEffect(() => {
     const calcularHorariosDisponiveis = async () => {
-      if (!formAgenda.data || !selectedPsi || psicologosDB.length === 0) return;
+      if (!formAgenda.data || !selectedPsi) return;
       
       setStatusHorarios('loading')
-      setFormAgenda(prev => ({ ...prev, horario: '' }))
+      setFormAgenda(prev => ({ ...prev, horario: '' })) // Limpa o horário se mudar o dia
 
       try {
-        const psiDb = psicologosDB.find(p => p.nome === selectedPsi.nome)
-        if (!psiDb) return setStatusHorarios('erro')
-
+        // 1. Descobrir qual é o dia da semana
         const dataObj = new Date(formAgenda.data + 'T12:00:00')
         const diaSemana = dataObj.getDay()
 
-        // Busca a configuração usando o ID relacional
-        const { data: configTurno, error: erroConfig } = await supabase
+        // 2. Buscar no Supabase SEM o .single() para não dar Erro 406
+        const { data: turnosEncontrados, error: erroConfig } = await supabase
           .from('config_agenda')
           .select('*')
-          .eq('psicologo_id', psiDb.id)
+          .eq('psicologa', selectedPsi.nome)
           .eq('dia_semana', diaSemana)
-          .single()
 
+        // Pega o primeiro turno que o banco achar (ignora se houver duplicatas fantasmas)
+        const configTurno = turnosEncontrados && turnosEncontrados.length > 0 ? turnosEncontrados[0] : null
+
+        // Se não tiver turno cadastrado ou der erro
         if (erroConfig || !configTurno) {
           setHorariosDisponiveis([])
-          return setStatusHorarios('done')
+          setStatusHorarios('done')
+          return
         }
 
+        // 3. Gerar os blocos de 50 minutos
         const slotsGerados = []
         let [horaInicio, minInicio] = configTurno.hora_inicio.split(':').map(Number)
         let [horaFim, minFim] = configTurno.hora_fim.split(':').map(Number)
@@ -68,30 +73,33 @@ export default function App() {
           const h = Math.floor(tempoAtualEmMinutos / 60).toString().padStart(2, '0')
           const m = (tempoAtualEmMinutos % 60).toString().padStart(2, '0')
           slotsGerados.push(`${h}:${m}`)
+          
           tempoAtualEmMinutos += duracaoSessao
         }
 
-        // Busca agendamentos ocupados pelo ID
+        // 4. Buscar agendamentos ocupados
         const { data: agendados } = await supabase
           .from('agendamentos')
           .select('horario')
-          .eq('psicologo_id', psiDb.id)
+          .eq('psicologa', selectedPsi.nome)
           .eq('data_agendamento', formAgenda.data)
 
         const horariosOcupados = agendados ? agendados.map(a => a.horario) : []
+
+        // 5. Filtrar os livres
         const slotsLivres = slotsGerados.filter(slot => !horariosOcupados.includes(slot))
 
         setHorariosDisponiveis(slotsLivres)
         setStatusHorarios('done')
 
       } catch (error) {
-        console.error(error)
+        console.error("Erro ao calcular horários:", error)
         setStatusHorarios('erro')
       }
     }
 
     calcularHorariosDisponiveis()
-  }, [formAgenda.data, selectedPsi, psicologosDB])
+  }, [formAgenda.data, selectedPsi])
 
   const handleCloseModal = () => {
     setIsClosing(true)
