@@ -12,9 +12,8 @@ export default function Admin() {
   const [agendamentos, setAgendamentos] = useState([])
   const [loadingAgendamentos, setLoadingAgendamentos] = useState(true)
   
-  // ESTADO DOS PSICÓLOGOS DO BANCO
   const [listaPsicologos, setListaPsicologos] = useState([])
-  const [filtroPsi, setFiltroPsi] = useState('Todos') // Agora guarda o ID
+  const [filtroPsi, setFiltroPsi] = useState('Todos')
   const [isPsiFixo, setIsPsiFixo] = useState(false)
 
   const [modalAgendaAberto, setModalAgendaAberto] = useState(false)
@@ -28,14 +27,11 @@ export default function Admin() {
 
   const nomesDias = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']
 
-  // --- BUSCA INICIAL DE USUÁRIO E PSICÓLOGOS ---
   useEffect(() => {
     const carregarSistema = async () => {
-      // Puxa lista de psicólogos do banco
       const { data: psis } = await supabase.from('psicologos').select('*')
       if (psis) setListaPsicologos(psis)
 
-      // Checa sessão atual
       const { data: { session } } = await supabase.auth.getSession()
       if (session && psis) configurarUsuario(session.user, psis)
     }
@@ -57,14 +53,13 @@ export default function Admin() {
     setUsuarioAtual(user)
     setAutenticado(true)
     
-    // Descobre se quem logou é um dos psicólogos
     const psiVinculado = psis.find(p => p.email === user.email)
     
     if (psiVinculado) {
       setFiltroPsi(psiVinculado.id)
       setIsPsiFixo(true)
     } else {
-      setFiltroPsi('Todos') // Admin Geral (ex: contato@savoir.com)
+      setFiltroPsi('Todos')
       setIsPsiFixo(false)
     }
 
@@ -72,7 +67,6 @@ export default function Admin() {
     buscarConfiguracoes()
   }
 
-  // --- LOGIN REAL ---
   const handleLogin = async (e) => {
     e.preventDefault()
     const { error } = await supabase.auth.signInWithPassword({ email, password: senha })
@@ -85,7 +79,6 @@ export default function Admin() {
     setSenha('')
   }
 
-  // --- BUSCAR DADOS ---
   const buscarAgendamentos = async () => {
     setLoadingAgendamentos(true)
     const { data, error } = await supabase.from('agendamentos').select('*').order('data_agendamento', { ascending: true })
@@ -100,7 +93,6 @@ export default function Admin() {
     setLoadingConfigs(false)
   }
 
-  // --- AÇÕES DE AGENDAMENTO (AGORA RELACIONAL) ---
   const handleConfirmar = async (id) => {
     await supabase.from('agendamentos').update({ status: 'confirmado' }).eq('id', id)
     buscarAgendamentos()
@@ -132,7 +124,6 @@ export default function Admin() {
   const handleSalvarAgendamentoManual = async (e) => {
     e.preventDefault()
     
-    // Adicionamos o nome por segurança caso queira exibir sem fazer join no banco
     const psiSelecionado = listaPsicologos.find(p => p.id === formManual.psicologo_id)
     const dadosEnvio = { ...formManual, psicologa: psiSelecionado?.nome }
 
@@ -147,7 +138,6 @@ export default function Admin() {
     buscarAgendamentos()
   }
 
-  // --- AÇÕES DE CONFIGURAÇÃO (HORÁRIOS) ---
   const handleSalvarConfig = async (e) => {
     e.preventDefault()
     const idSelecionado = isPsiFixo ? filtroPsi : formConfig.psicologo_id
@@ -163,7 +153,7 @@ export default function Admin() {
     const psiDb = listaPsicologos.find(p => p.id === idSelecionado)
     const dadosTurno = {
       psicologo_id: idSelecionado,
-      psicologa: psiDb.nome, // Mantém backup de nome
+      psicologa: psiDb.nome,
       dia_semana: parseInt(formConfig.dia_semana), 
       hora_inicio: formConfig.hora_inicio, 
       hora_fim: formConfig.hora_fim, 
@@ -171,11 +161,14 @@ export default function Admin() {
     }
 
     if (editingConfigId) {
-      await supabase.from('config_agenda').update(dadosTurno).eq('id', editingConfigId)
+      const { error } = await supabase.from('config_agenda').update(dadosTurno).eq('id', editingConfigId)
+      if (error) { alert('Erro ao atualizar: ' + error.message); return; }
     } else {
-      await supabase.from('config_agenda').insert([dadosTurno])
+      const { error } = await supabase.from('config_agenda').insert([dadosTurno])
+      if (error) { alert('Erro ao salvar: ' + error.message); return; }
     }
 
+    alert('Turno salvo com sucesso!')
     setEditingConfigId(null)
     setFormConfig({ psicologo_id: '', dia_semana: '1', hora_inicio: '18:00', hora_fim: '21:00' })
     buscarConfiguracoes()
@@ -198,11 +191,9 @@ export default function Admin() {
     }
   }
 
-  // --- FILTROS APLICADOS NA TELA ---
   const listaAgendamentosFiltrada = filtroPsi === 'Todos' ? agendamentos : agendamentos.filter(item => item.psicologo_id === filtroPsi)
   const listaConfigsFiltrada = filtroPsi === 'Todos' ? configuracoes : configuracoes.filter(item => item.psicologo_id === filtroPsi)
 
-  // AJUDANTE PARA NOME
   const getNomePsi = (id) => listaPsicologos.find(p => p.id === id)?.nome || 'Profissional'
 
   if (!autenticado) {
@@ -244,7 +235,6 @@ export default function Admin() {
             )}
             <div className="flex items-center gap-2 w-full md:w-auto">
               <Filter size={18} className="text-gray-400"/>
-              {/* SELECT DINÂMICO DOS PSICÓLOGOS */}
               <select className="bg-gray-50 border border-gray-200 text-sm p-2 rounded-lg outline-none focus:border-savoir-gold w-full md:w-auto disabled:opacity-50" value={filtroPsi} onChange={e => setFiltroPsi(e.target.value)} disabled={isPsiFixo}>
                 <option value="Todos">Visão Geral (Todos)</option>
                 {listaPsicologos.map(p => (
@@ -344,7 +334,7 @@ export default function Admin() {
         )}
       </main>
 
-      {/* MODAL MANUAL COM SELECT DINÂMICO DE ID */}
+      {/* MODAL MANUAL */}
       {modalAgendaAberto && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-savoir-navy/80 backdrop-blur-sm">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 relative">
