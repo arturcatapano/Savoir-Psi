@@ -7,50 +7,55 @@ export default function App() {
   const [selectedPsi, setSelectedPsi] = useState(null)
   const [isClosing, setIsClosing] = useState(false)
   
-  // --- ESTADOS DO FORMULÁRIO E AGENDA DINÂMICA ---
   const [formAgenda, setFormAgenda] = useState({ nome: '', telefone: '', data: '', horario: '' })
-  const [statusAgenda, setStatusAgenda] = useState('idle') // idle, loading, success
-  
-  // Novos estados para a Mágica dos Horários
+  const [statusAgenda, setStatusAgenda] = useState('idle')
   const [horariosDisponiveis, setHorariosDisponiveis] = useState([])
-  const [statusHorarios, setStatusHorarios] = useState('idle') // idle, loading, done, erro
+  const [statusHorarios, setStatusHorarios] = useState('idle')
 
-  // Trava de data (Sempre a partir de amanhã)
+  // Estado para guardar os IDs reais do banco de dados
+  const [psicologosDB, setPsicologosDB] = useState([])
+
   const amanha = new Date();
   amanha.setDate(amanha.getDate() + 1);
   const dataMinima = amanha.toISOString().split('T')[0];
 
-  // =========================================================================
-  // A MÁQUINA MATEMÁTICA DE HORÁRIOS
-  // =========================================================================
+  // BUSCA OS IDs DOS PSICÓLOGOS NO BANCO AO ABRIR O SITE
+  useEffect(() => {
+    const fetchPsi = async () => {
+      const { data } = await supabase.from('psicologos').select('*')
+      if (data) setPsicologosDB(data)
+    }
+    fetchPsi()
+  }, [])
+
+  // MÁQUINA MATEMÁTICA DE HORÁRIOS (AGORA USANDO ID)
   useEffect(() => {
     const calcularHorariosDisponiveis = async () => {
-      if (!formAgenda.data || !selectedPsi) return;
+      if (!formAgenda.data || !selectedPsi || psicologosDB.length === 0) return;
       
       setStatusHorarios('loading')
-      setFormAgenda(prev => ({ ...prev, horario: '' })) // Limpa o horário se mudar o dia
+      setFormAgenda(prev => ({ ...prev, horario: '' }))
 
       try {
-        // 1. Descobrir qual é o dia da semana (Ajuste de fuso T12 para evitar bugs de data)
+        const psiDb = psicologosDB.find(p => p.nome === selectedPsi.nome)
+        if (!psiDb) return setStatusHorarios('erro')
+
         const dataObj = new Date(formAgenda.data + 'T12:00:00')
         const diaSemana = dataObj.getDay()
 
-        // 2. Buscar no Supabase se o psicólogo trabalha nesse dia da semana
+        // Busca a configuração usando o ID relacional
         const { data: configTurno, error: erroConfig } = await supabase
           .from('config_agenda')
           .select('*')
-          .eq('psicologa', selectedPsi.nome)
+          .eq('psicologo_id', psiDb.id)
           .eq('dia_semana', diaSemana)
-          .single() // Pega apenas 1 turno
+          .single()
 
-        // Se não tiver turno cadastrado ou der erro (não achou)
         if (erroConfig || !configTurno) {
           setHorariosDisponiveis([])
-          setStatusHorarios('done')
-          return
+          return setStatusHorarios('done')
         }
 
-        // 3. Gerar os blocos de 50 minutos
         const slotsGerados = []
         let [horaInicio, minInicio] = configTurno.hora_inicio.split(':').map(Number)
         let [horaFim, minFim] = configTurno.hora_fim.split(':').map(Number)
@@ -60,40 +65,33 @@ export default function App() {
         const duracaoSessao = configTurno.duracao_minutos || 50
 
         while (tempoAtualEmMinutos + duracaoSessao <= tempoFimEmMinutos) {
-          // Converte os minutos de volta para formato "HH:MM"
           const h = Math.floor(tempoAtualEmMinutos / 60).toString().padStart(2, '0')
           const m = (tempoAtualEmMinutos % 60).toString().padStart(2, '0')
           slotsGerados.push(`${h}:${m}`)
-          
-          tempoAtualEmMinutos += duracaoSessao // Pula 50 min pra frente
+          tempoAtualEmMinutos += duracaoSessao
         }
 
-        // 4. Buscar agendamentos que já existem neste dia para remover da lista
+        // Busca agendamentos ocupados pelo ID
         const { data: agendados } = await supabase
           .from('agendamentos')
           .select('horario')
-          .eq('psicologa', selectedPsi.nome)
+          .eq('psicologo_id', psiDb.id)
           .eq('data_agendamento', formAgenda.data)
 
         const horariosOcupados = agendados ? agendados.map(a => a.horario) : []
-
-        // 5. Filtrar cruzando os gerados x ocupados
         const slotsLivres = slotsGerados.filter(slot => !horariosOcupados.includes(slot))
 
         setHorariosDisponiveis(slotsLivres)
         setStatusHorarios('done')
 
       } catch (error) {
-        console.error("Erro ao calcular horários:", error)
+        console.error(error)
         setStatusHorarios('erro')
       }
     }
 
-    // Chama a função toda vez que a DATA selecionada mudar
     calcularHorariosDisponiveis()
-  }, [formAgenda.data, selectedPsi])
-
-  // =========================================================================
+  }, [formAgenda.data, selectedPsi, psicologosDB])
 
   const handleCloseModal = () => {
     setIsClosing(true)
@@ -114,29 +112,33 @@ export default function App() {
 
   const handleAgendar = async (e) => {
     e.preventDefault()
-    if (!formAgenda.horario) return alert('Por favor, selecione um horário!')
+    if (!formAgenda.horario) return alert('Selecione um horário!')
     setStatusAgenda('loading')
 
+    const psiDb = psicologosDB.find(p => p.nome === selectedPsi.nome)
+
+    // Tenta inserir. Se a trava do banco bloquear (dois clicando juntos), ele cai no erro.
     const { error } = await supabase.from('agendamentos').insert([{
       nome_paciente: formAgenda.nome,
       telefone_paciente: formAgenda.telefone,
-      psicologa: selectedPsi.nome,
+      psicologa: selectedPsi.nome, // Mantemos por garantia de leitura fácil
+      psicologo_id: psiDb.id, // A RELAÇÃO REAL
       data_agendamento: formAgenda.data,
       horario: formAgenda.horario
     }])
 
     if (error) {
-      alert('Erro ao agendar: ' + error.message)
+      alert('Horário indisponível! Outra pessoa pode ter agendado neste exato momento. Por favor, escolha outro horário.')
       setStatusAgenda('idle')
+      // Força a recarregar a data para atualizar os botões
+      setFormAgenda(prev => ({ ...prev, data: '' })) 
     } else {
       setStatusAgenda('success')
-      setTimeout(() => {
-        handleCloseModal()
-      }, 3000)
+      setTimeout(() => { handleCloseModal() }, 3000)
     }
   }
 
-  // --- DADOS DA EQUIPE ---
+  // --- DADOS VISUAIS DA EQUIPE ---
   const equipe = [
     {
       nome: "Psi. Lucas Barba", crp: "06/145904", especialidade: "Sexologia & Saúde Pública", foto: "/lucas.jpeg", link: "https://wa.me/5511999999999",
@@ -167,7 +169,6 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col relative bg-savoir-light font-sans text-savoir-text">
       
-      {/* NAVBAR */}
       <nav className="bg-savoir-navy/90 backdrop-blur-md text-white py-4 px-6 fixed w-full z-40 shadow-lg transition-all duration-300">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="text-2xl font-serif italic tracking-widest text-savoir-gold cursor-pointer hover:scale-105 transition-transform">Savoir Psi</div>
@@ -189,7 +190,6 @@ export default function App() {
         )}
       </nav>
 
-      {/* HERO E OUTRAS SEÇÕES IGUAIS... */}
       <section id="home" className="relative h-screen flex items-center justify-center bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80')"}}>
         <div className="absolute inset-0 bg-savoir-navy/70"></div>
         <div className="relative z-10 text-center text-white px-4 max-w-4xl animate-fade-in-up">
@@ -258,13 +258,10 @@ export default function App() {
         <div className="max-w-6xl mx-auto text-center">
             <h2 className="text-2xl font-serif italic text-savoir-gold mb-4">Savoir Psi</h2>
             <p className="opacity-70 text-sm">Escuta, elaboração e transformação.</p>
-            <p className="opacity-70 text-sm mt-2">Av. Tucuruvi, 654 - São Paulo, SP</p>
         </div>
       </footer>
 
-      {/* ========================================================================= */}
-      {/* MODAL (POP-UP) COM A NOVA SELEÇÃO DINÂMICA DE HORÁRIOS */}
-      {/* ========================================================================= */}
+      {/* MODAL DE AGENDA DO PACIENTE */}
       {selectedPsi && (
         <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`}>
           <div className="absolute inset-0 bg-savoir-navy/90 backdrop-blur-sm" onClick={handleCloseModal}></div>
@@ -272,7 +269,6 @@ export default function App() {
           <div className={`bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative z-10 flex flex-col md:flex-row ${isClosing ? 'animate-slide-down' : 'animate-slide-up'}`}>
             <button onClick={handleCloseModal} className="absolute top-4 right-4 bg-white/80 p-2 rounded-full hover:bg-gray-100 z-20 text-gray-800 transition active:scale-90 shadow-sm"><X size={24} /></button>
 
-            {/* COLUNA ESQUERDA: FORMULÁRIO */}
             <div className="md:w-5/12 bg-savoir-light p-6 flex flex-col items-center border-r border-gray-100">
               <div className="w-24 h-24 rounded-full overflow-hidden mb-4 border-4 border-white shadow-lg shrink-0">
                 <img src={selectedPsi.foto} className="w-full h-full object-cover" />
@@ -295,32 +291,23 @@ export default function App() {
                     <input required type="tel" placeholder="WhatsApp (Ex: 11999999999)" className="w-full p-2 text-sm border rounded bg-gray-50 focus:border-savoir-gold focus:outline-none transition" value={formAgenda.telefone} onChange={e => setFormAgenda({...formAgenda, telefone: e.target.value})} />
                     
                     <div className="relative">
-                      <input 
-                        required type="date" 
-                        min={dataMinima} 
-                        className="w-full p-2 text-sm border rounded bg-gray-50 focus:border-savoir-gold focus:outline-none text-gray-600 transition" 
-                        value={formAgenda.data} 
-                        onChange={e => setFormAgenda({...formAgenda, data: e.target.value})} 
-                      />
+                      <input required type="date" min={dataMinima} className="w-full p-2 text-sm border rounded bg-gray-50 focus:border-savoir-gold focus:outline-none text-gray-600 transition" value={formAgenda.data} onChange={e => setFormAgenda({...formAgenda, data: e.target.value})} />
                     </div>
                     
-                    {/* ÁREA DOS BOTÕES DE HORÁRIO DINÂMICOS */}
                     <div className="mt-2 min-h-[100px] border border-gray-100 rounded-lg p-3 bg-gray-50/50">
                       <label className="text-xs font-bold text-gray-500 uppercase flex items-center gap-1 mb-2"><Clock size={12}/> Horários Disponíveis</label>
                       
                       {!formAgenda.data ? (
-                        <p className="text-xs text-gray-400 text-center italic py-4">Selecione uma data acima primeiro.</p>
+                        <p className="text-xs text-gray-400 text-center italic py-4">Selecione uma data acima.</p>
                       ) : statusHorarios === 'loading' ? (
                         <p className="text-xs text-savoir-gold text-center font-bold py-4 animate-pulse">Buscando agenda...</p>
                       ) : horariosDisponiveis.length === 0 ? (
-                        <p className="text-xs text-red-400 text-center py-4 bg-red-50 rounded border border-red-100">Não há horários para esta data.</p>
+                        <p className="text-xs text-red-400 text-center py-4 bg-red-50 rounded border border-red-100">Não há horários neste dia.</p>
                       ) : (
                         <div className="grid grid-cols-3 gap-2">
                           {horariosDisponiveis.map((hora) => (
                             <button
-                              key={hora}
-                              type="button"
-                              onClick={() => setFormAgenda({...formAgenda, horario: hora})}
+                              key={hora} type="button" onClick={() => setFormAgenda({...formAgenda, horario: hora})}
                               className={`py-2 px-1 text-xs font-bold rounded border transition-all ${formAgenda.horario === hora ? 'bg-savoir-gold text-white border-savoir-gold shadow-md transform scale-105' : 'bg-white text-savoir-navy border-gray-200 hover:border-savoir-gold hover:text-savoir-gold'}`}
                             >
                               {hora}
@@ -338,16 +325,9 @@ export default function App() {
               </div>
             </div>
 
-            {/* COLUNA DIREITA: INFO DO PSI */}
             <div className="md:w-7/12 p-8 overflow-y-auto custom-scrollbar bg-white">
-              <div className="mb-6">
-                <h4 className="flex items-center gap-2 text-savoir-navy font-bold text-lg mb-2 font-serif"><Brain className="text-savoir-gold" size={20}/> Sobre o Profissional</h4>
-                <p className="text-gray-600 leading-relaxed text-sm">{selectedPsi.sobre}</p>
-              </div>
-              <div className="mb-6">
-                <h4 className="flex items-center gap-2 text-savoir-navy font-bold text-lg mb-2 font-serif"><BookOpen className="text-savoir-gold" size={20}/> Abordagem Clínica</h4>
-                <div className="bg-savoir-light/50 p-4 rounded-lg border-l-4 border-savoir-gold"><p className="text-gray-700 italic text-sm">"{selectedPsi.abordagem}"</p></div>
-              </div>
+              <div className="mb-6"><h4 className="flex items-center gap-2 text-savoir-navy font-bold text-lg mb-2 font-serif"><Brain className="text-savoir-gold" size={20}/> Sobre o Profissional</h4><p className="text-gray-600 leading-relaxed text-sm">{selectedPsi.sobre}</p></div>
+              <div className="mb-6"><h4 className="flex items-center gap-2 text-savoir-navy font-bold text-lg mb-2 font-serif"><BookOpen className="text-savoir-gold" size={20}/> Abordagem Clínica</h4><div className="bg-savoir-light/50 p-4 rounded-lg border-l-4 border-savoir-gold"><p className="text-gray-700 italic text-sm">"{selectedPsi.abordagem}"</p></div></div>
               <div>
                 <h4 className="flex items-center gap-2 text-savoir-navy font-bold text-lg mb-3 font-serif"><GraduationCap className="text-savoir-gold" size={20}/> Formação Acadêmica</h4>
                 <ul className="space-y-2">
@@ -363,18 +343,12 @@ export default function App() {
       )}
 
       <style>{`
-        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-        .animate-fade-in { animation: fade-in 0.3s ease-out forwards; }
-        @keyframes slide-up { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .animate-slide-up { animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
-        .animate-fade-out { animation: fade-out 0.3s ease-in forwards; }
-        @keyframes slide-down { from { transform: translateY(0); opacity: 1; } to { transform: translateY(20px); opacity: 0; } }
-        .animate-slide-down { animation: slide-down 0.3s ease-in forwards; }
+        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } } .animate-fade-in { animation: fade-in 0.3s ease-out forwards; }
+        @keyframes slide-up { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } } .animate-slide-up { animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fade-out { from { opacity: 1; } to { opacity: 0; } } .animate-fade-out { animation: fade-out 0.3s ease-in forwards; }
+        @keyframes slide-down { from { transform: translateY(0); opacity: 1; } to { transform: translateY(20px); opacity: 0; } } .animate-slide-down { animation: slide-down 0.3s ease-in forwards; }
         html { scroll-behavior: smooth; }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #C5A880; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; } .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; } .custom-scrollbar::-webkit-scrollbar-thumb { background: #C5A880; border-radius: 3px; }
       `}</style>
     </div>
   )
