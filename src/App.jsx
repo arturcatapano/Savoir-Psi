@@ -150,15 +150,15 @@ export default function App() {
   const equipe = [
     {
       nome: "Psi. Lucas Barba", crp: "06/145904", especialidade: "Sexologia & Saúde Pública", foto: "/lucas.jpeg", link: "https://wa.me/5511999999999",
-      sobre: "Formado em psicologia em 2017. Atendo Adolescentes, Adultos e Terceira Idade. Possui ampla formação em gestão de saúde e especialização em sexualidade humana.",
+      sobre: "Sou formado em psicologia desde 2017. Atendo adolescentes, adultos e a terceira idade. Construí uma ampla formação em gestão de saúde e possuo especialização em sexualidade humana.",
       formacao: ["Pós-graduação em Sexologia - Instituto Paulista de Sexualidade (2020)", "Pós-graduação em Saúde Mental - Faculdade Unyleya (2022)", "Pós-graduação em Gestão em Saúde Pública - Estácio (2021)", "Capacitação em Distúrbios Alimentares Pediátricos - Santa Marcelina (2024)", "Terapia das Sexualidades (disfunções femininas e masculinas)"],
-      abordagem: "Atuação focada na saúde integral. Ofereço acolhimento para questões de sexualidade (Livre de tabus), distúrbios alimentares e saúde mental geral."
+      abordagem: "Minha atuação é focada na saúde integral. Ofereço acolhimento seguro e livre de tabus para questões de sexualidade, distúrbios alimentares e saúde mental geral."
     },
     {
       nome: "Psi. Amanda Pierot", crp: "06/122476", especialidade: "Psicanálise Lacaniana & Psicossomática", foto: "/amanda.jpeg", link: "https://wa.me/5511999999999",
-      sobre: "Psicanalista Lacaniana formada em 2014. Atendo público adulto e pessoas da terceira idade. Possui sólida formação clínica e hospitalar, com foco no sujeito do inconsciente.",
+      sobre: "Sou Psicanalista Lacaniana, formada em 2014. Atendo o público adulto e pessoas da terceira idade. Tenho uma sólida formação clínica e hospitalar, com minha escuta sempre voltada ao sujeito do inconsciente.",
       formacao: ["Formação em Psicanálise Lacaniana - Fac. de Psicanálise de Strasburgo (FR)", "Formação em Psicanálise pelo Centro de Estudos Psicanalítico (CEP)", "Formação em Psicossomática Psicanalítica - Inst. Sedes Sapientia", "Formação em Cardiologia e Cardiopatia - InCor (HCFMUSP)", "Especialista em Terapia do Luto (PUC-SP) e Psicologia Geriátrica (PUC-RS)"],
-      abordagem: "Orientação Lacaniana. O foco não é apenas eliminar o sintoma, mas escutar a história de vida e os desejos inconscientes, tratando questões como luto e doenças psicossomáticas."
+      abordagem: "Trabalho com a Orientação Lacaniana. Meu foco não é apenas eliminar o sintoma, mas escutar a sua história de vida e os desejos inconscientes, tratando questões profundas como luto e doenças psicossomáticas."
     },
     {
       nome: "Psi. Alini Correia", crp: "06/153091", especialidade: "TCC, Neuropsicologia & Sexologia", foto: "/alini.jpeg", link: "https://wa.me/5511999999999",
