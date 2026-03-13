@@ -149,25 +149,25 @@ export default function App() {
   // --- DADOS VISUAIS DA EQUIPE ---
   const equipe = [
     {
-      nome: "Psi. Lucas Barba", crp: "06/145904", especialidade: "Sexologia & Saúde Pública", foto: "/lucas.jpeg", link: "https://wa.me/5511999999999",
+      nome: "Psi. Lucas Barba", crp: "06/145904", especialidade: "Sexologia & Saúde Pública", foto: "/lucas.jpeg", link: "https://wa.me/5511940197767",
       sobre: "Sou formado em psicologia desde 2017. Atendo adolescentes, adultos e a terceira idade. Construí uma ampla formação em gestão de saúde e possuo especialização em sexualidade humana.",
       formacao: ["Pós-graduação em Sexologia - Instituto Paulista de Sexualidade (2020)", "Pós-graduação em Saúde Mental - Faculdade Unyleya (2022)", "Pós-graduação em Gestão em Saúde Pública - Estácio (2021)", "Capacitação em Distúrbios Alimentares Pediátricos - Santa Marcelina (2024)", "Terapia das Sexualidades (disfunções femininas e masculinas)"],
       abordagem: "Minha atuação é focada na saúde integral. Ofereço acolhimento seguro e livre de tabus para questões de sexualidade, distúrbios alimentares e saúde mental geral."
     },
     {
-      nome: "Psi. Amanda Pierot", crp: "06/122476", especialidade: "Psicanálise Lacaniana & Psicossomática", foto: "/amanda.jpeg", link: "https://wa.me/5511999999999",
+      nome: "Psi. Amanda Pierot", crp: "06/122476", especialidade: "Psicanálise Lacaniana & Psicossomática", foto: "/amanda.jpeg", link: "https://wa.me/5511984805074",
       sobre: "Sou Psicanalista Lacaniana, formada em 2014. Atendo o público adulto e pessoas da terceira idade. Tenho uma sólida formação clínica e hospitalar, com minha escuta sempre voltada ao sujeito do inconsciente.",
       formacao: ["Formação em Psicanálise Lacaniana - Fac. de Psicanálise de Strasburgo (FR)", "Formação em Psicanálise pelo Centro de Estudos Psicanalítico (CEP)", "Formação em Psicossomática Psicanalítica - Inst. Sedes Sapientia", "Formação em Cardiologia e Cardiopatia - InCor (HCFMUSP)", "Especialista em Terapia do Luto (PUC-SP) e Psicologia Geriátrica (PUC-RS)"],
       abordagem: "Trabalho com a Orientação Lacaniana. Meu foco não é apenas eliminar o sintoma, mas escutar a sua história de vida e os desejos inconscientes, tratando questões profundas como luto e doenças psicossomáticas."
     },
     {
-      nome: "Psi. Alini Correia", crp: "06/153091", especialidade: "TCC, Neuropsicologia & Sexologia", foto: "/alini.jpeg", link: "https://wa.me/5511999999999",
+      nome: "Psi. Alini Correia", crp: "06/153091", especialidade: "TCC, Neuropsicologia & Sexologia", foto: "/alini.jpeg", link: "https://wa.me/5511965029254",
       sobre: "Com 7 anos de experiência clínica, educacional e social. Minha trajetória é marcada por um olhar amplo e humanizado. Atendo crianças, adolescentes, adultos e casais.",
       formacao: ["Especialista em Sexologia Aplicada - Inst. Paulista de Sexualidade", "Formação em Neuropsicologia - FMU", "Graduação em Psicologia - Faculdade Anhanguera", "Experiência em Terapia de Casais e Saúde Sexual"],
       abordagem: "Terapia Cognitivo-Comportamental (TCC). Utilizo ferramentas práticas para transformar padrões de pensamento e comportamento. Trabalho também com identidade de gênero e fortalecimento de vínculos afetivos."
     },
     {
-      nome: "Psi. Karina Catapano", crp: "06/223358", especialidade: "Psicanálise & Psicologia Organizacional", foto: "/karina.jpg", link: "https://wa.me/5511999999999",
+      nome: "Psi. Karina Catapano", crp: "06/223358", especialidade: "Psicanálise & Psicologia Organizacional", foto: "/karina.jpg", link: "https://wa.me/5511962837380",
       sobre: "Tenho 26 anos e sou apaixonada pelo ser humano. Minha atuação é híbrida e integrativa: sou Psicóloga Organizacional e Clínica. Acredito que não existe separação entre a 'pessoa' e o 'profissional'.",
       formacao: ["Graduação em Psicologia - Universidade São Judas Tadeu (2022)", "Psicóloga Organizacional e Clínica", "Ênfase em Psicanálise"],
       abordagem: "Psicanálise Integrativa. Utilizo a escuta terapêutica para tratar angústias e processos de autoconhecimento. No âmbito organizacional, aplico essa sensibilidade para humanizar relações de trabalho."
