@@ -18,6 +18,6 @@ h1, h2, h3, h4 {
 }
 
 /* Classe personalizada para botões */
-.btn-gold {
-  @apply bg-[#C5A880] text-white px-6 py-3 rounded-md font-bold uppercase tracking-wider text-sm hover:bg-[#b09268] transition-all duration-300 shadow-md;
+.btn-accent {
+  @apply bg-[#B77A4A] text-white px-6 py-3 rounded-md font-bold uppercase tracking-wider text-sm hover:bg-[#A36636] transition-all duration-300 shadow-md;
 }

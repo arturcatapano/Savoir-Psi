@@ -29,10 +29,10 @@ export default function Admin() {
 
   // --- MAPEAMENTO SEGURO DE E-MAILS (SEM RELAÇÃO DE BANCO) ---
   const getPsiByEmail = (userEmail) => {
-    if (userEmail === 'lucas@savoir.com') return 'Psi. Lucas Barba'
-    if (userEmail === 'amanda@savoir.com') return 'Psi. Amanda Pierot'
-    if (userEmail === 'alini@savoir.com') return 'Psi. Alini Correia'
-    if (userEmail === 'karina@savoir.com') return 'Psi. Karina Catapano'
+    if (userEmail === 'lucas@folhadaalma.com') return 'Psi. Lucas Barba'
+    if (userEmail === 'amanda@folhadaalma.com') return 'Psi. Amanda Pierot'
+    if (userEmail === 'alini@folhadaalma.com') return 'Psi. Alini Correia'
+    if (userEmail === 'karina@folhadaalma.com') return 'Psi. Karina Catapano'
     return 'Todos'
   }
 
@@ -195,9 +195,9 @@ export default function Admin() {
   // TELA DE CARREGAMENTO DO F5
   if (carregandoSessao) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-savoir-navy text-white">
+      <div className="min-h-screen flex items-center justify-center bg-folha-dark text-white">
         <div className="flex flex-col items-center gap-4">
-          <p className="animate-pulse text-savoir-gold font-serif text-2xl italic tracking-wider">Verificando acesso...</p>
+          <p className="animate-pulse text-folha-accent font-serif text-2xl italic tracking-wider">Verificando acesso...</p>
         </div>
       </div>
     )
@@ -205,13 +205,13 @@ export default function Admin() {
 
   if (!autenticado) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-savoir-navy text-white px-4">
+      <div className="min-h-screen flex items-center justify-center bg-folha-dark text-white px-4">
         <form onSubmit={handleLogin} className="bg-white/10 p-8 rounded-2xl backdrop-blur-md w-full max-w-sm border border-white/20 shadow-2xl">
-          <h1 className="text-3xl font-serif text-center mb-2 text-savoir-gold">Savoir Admin</h1>
+          <h1 className="text-3xl font-serif text-center mb-2 text-folha-accent">Admin Folha da Alma</h1>
           <p className="text-center text-sm text-gray-300 mb-8">Acesso restrito para profissionais</p>
-          <input type="email" placeholder="Seu E-mail" required className="w-full p-3 rounded bg-white/90 text-gray-900 mb-3 focus:outline-none focus:ring-2 focus:ring-savoir-gold" value={email} onChange={e => setEmail(e.target.value)} />
-          <input type="password" placeholder="Sua Senha" required className="w-full p-3 rounded bg-white/90 text-gray-900 mb-6 focus:outline-none focus:ring-2 focus:ring-savoir-gold" value={senha} onChange={e => setSenha(e.target.value)} />
-          <button className="w-full bg-savoir-gold text-white font-bold py-3 rounded hover:bg-[#b09268] transition shadow-lg">Entrar no Sistema</button>
+          <input type="email" placeholder="Seu E-mail" required className="w-full p-3 rounded bg-white/90 text-gray-900 mb-3 focus:outline-none focus:ring-2 focus:ring-folha-accent" value={email} onChange={e => setEmail(e.target.value)} />
+          <input type="password" placeholder="Sua Senha" required className="w-full p-3 rounded bg-white/90 text-gray-900 mb-6 focus:outline-none focus:ring-2 focus:ring-folha-accent" value={senha} onChange={e => setSenha(e.target.value)} />
+          <button className="w-full bg-folha-accent text-white font-bold py-3 rounded hover:bg-[#A36636] transition shadow-lg">Entrar no Sistema</button>
         </form>
       </div>
     )
@@ -219,14 +219,14 @@ export default function Admin() {
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-800 flex flex-col md:flex-row relative">
-      <aside className="w-full md:w-64 bg-savoir-navy text-white flex flex-col shadow-xl z-20 md:sticky md:top-0 md:h-screen">
+      <aside className="w-full md:w-64 bg-folha-dark text-white flex flex-col shadow-xl z-20 md:sticky md:top-0 md:h-screen">
         <div className="p-6 border-b border-gray-700">
-          <h1 className="text-2xl font-serif italic text-savoir-gold mb-1">Savoir Admin</h1>
+          <h1 className="text-2xl font-serif italic text-folha-accent mb-1">Admin Folha da Alma</h1>
           <p className="text-xs text-gray-400 break-all">{usuarioAtual?.email}</p>
         </div>
         <nav className="flex-1 p-4 flex flex-col gap-2">
-          <button onClick={() => setAbaAtiva('agenda')} className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${abaAtiva === 'agenda' ? 'bg-savoir-gold text-white' : 'hover:bg-white/10 text-gray-300'}`}><LayoutDashboard size={20} /> Pacientes</button>
-          <button onClick={() => setAbaAtiva('config')} className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${abaAtiva === 'config' ? 'bg-savoir-gold text-white' : 'hover:bg-white/10 text-gray-300'}`}><Settings size={20} /> Meus Horários</button>
+          <button onClick={() => setAbaAtiva('agenda')} className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${abaAtiva === 'agenda' ? 'bg-folha-accent text-white' : 'hover:bg-white/10 text-gray-300'}`}><LayoutDashboard size={20} /> Pacientes</button>
+          <button onClick={() => setAbaAtiva('config')} className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${abaAtiva === 'config' ? 'bg-folha-accent text-white' : 'hover:bg-white/10 text-gray-300'}`}><Settings size={20} /> Meus Horários</button>
         </nav>
         <div className="p-4 border-t border-gray-700">
           <button onClick={handleLogout} className="flex items-center gap-3 p-3 w-full rounded-lg hover:bg-red-500/20 text-red-300 transition-colors"><LogOut size={20}/> Sair do Sistema</button>
@@ -235,14 +235,14 @@ export default function Admin() {
 
       <main className="flex-1 p-6 overflow-y-auto">
         <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <h2 className="text-xl font-bold text-savoir-navy font-serif">{abaAtiva === 'agenda' ? 'Gestão de Agendamentos' : 'Configuração de Agenda'}</h2>
+          <h2 className="text-xl font-bold text-folha-dark font-serif">{abaAtiva === 'agenda' ? 'Gestão de Agendamentos' : 'Configuração de Agenda'}</h2>
           <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
             {abaAtiva === 'agenda' && (
-              <button onClick={abrirModalNovoAgendamento} className="bg-savoir-navy text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-savoir-gold transition flex items-center gap-2 w-full md:w-auto justify-center"><Plus size={16}/> Novo Agendamento</button>
+              <button onClick={abrirModalNovoAgendamento} className="bg-folha-dark text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-folha-accent transition flex items-center gap-2 w-full md:w-auto justify-center"><Plus size={16}/> Novo Agendamento</button>
             )}
             <div className="flex items-center gap-2 w-full md:w-auto">
               <Filter size={18} className="text-gray-400"/>
-              <select className="bg-gray-50 border border-gray-200 text-sm p-2 rounded-lg outline-none focus:border-savoir-gold w-full md:w-auto disabled:opacity-50 disabled:bg-gray-200" value={filtroPsi} onChange={e => setFiltroPsi(e.target.value)} disabled={isPsiFixo}>
+              <select className="bg-gray-50 border border-gray-200 text-sm p-2 rounded-lg outline-none focus:border-folha-accent w-full md:w-auto disabled:opacity-50 disabled:bg-gray-200" value={filtroPsi} onChange={e => setFiltroPsi(e.target.value)} disabled={isPsiFixo}>
                 <option value="Todos">Visão Geral (Todos)</option>
                 <option value="Psi. Lucas Barba">Psi. Lucas Barba</option>
                 <option value="Psi. Amanda Pierot">Psi. Amanda Pierot</option>
@@ -264,15 +264,15 @@ export default function Admin() {
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${item.status === 'confirmado' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{item.status || 'Pendente'}</span>
                         <span className="text-xs text-gray-400 flex items-center gap-1"><Clock size={12}/> Recebido em {new Date(item.created_at).toLocaleDateString()}</span>
                       </div>
-                      <h3 className="text-lg font-bold text-savoir-navy flex items-center gap-2">{item.nome_paciente}</h3>
+                      <h3 className="text-lg font-bold text-folha-dark flex items-center gap-2">{item.nome_paciente}</h3>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2 text-sm text-gray-600">
-                        <p className="flex items-center gap-1"><User size={14} className="text-savoir-gold"/> {item.psicologa}</p>
-                        <p className="flex items-center gap-1"><Calendar size={14} className="text-savoir-gold"/> {new Date(item.data_agendamento + 'T00:00:00').toLocaleDateString()}</p>
-                        <p className="flex items-center gap-1"><Clock size={14} className="text-savoir-gold"/> {item.horario}</p>
+                        <p className="flex items-center gap-1"><User size={14} className="text-folha-accent"/> {item.psicologa}</p>
+                        <p className="flex items-center gap-1"><Calendar size={14} className="text-folha-accent"/> {new Date(item.data_agendamento + 'T00:00:00').toLocaleDateString()}</p>
+                        <p className="flex items-center gap-1"><Clock size={14} className="text-folha-accent"/> {item.horario}</p>
                       </div>
                     </div>
                     <div className="flex flex-wrap gap-2 mt-4 md:mt-0 w-full md:w-auto">
-                      <a href={`https://wa.me/55${item.telefone_paciente.replace(/\D/g,'')}?text=Olá ${item.nome_paciente}, sou da clínica Savoir Psi.`} target="_blank" className="flex-1 md:flex-none bg-green-50 text-green-600 p-2 rounded hover:bg-green-100 transition flex items-center justify-center border border-green-200"><MessageCircle size={18} /></a>
+                      <a href={`https://wa.me/55${item.telefone_paciente.replace(/\D/g,'')}?text=Olá ${item.nome_paciente}, sou da clínica Folha da Alma.`} target="_blank" className="flex-1 md:flex-none bg-green-50 text-green-600 p-2 rounded hover:bg-green-100 transition flex items-center justify-center border border-green-200"><MessageCircle size={18} /></a>
                       {item.status !== 'confirmado' && <button onClick={() => handleConfirmar(item.id)} className="flex-1 md:flex-none bg-blue-50 text-blue-600 p-2 rounded hover:bg-blue-100 transition flex items-center justify-center border border-blue-200"><CheckCircle size={18} /></button>}
                       <button onClick={() => abrirModalEditarAgendamento(item)} className="flex-1 md:flex-none bg-orange-50 text-orange-600 p-2 rounded hover:bg-orange-100 transition flex items-center justify-center border border-orange-200"><Edit size={18} /></button>
                       <button onClick={() => handleDeletarAgendamento(item.id)} className="flex-1 md:flex-none bg-red-50 text-red-500 p-2 rounded hover:bg-red-100 transition flex items-center justify-center border border-red-200"><Trash2 size={18} /></button>
@@ -288,7 +288,7 @@ export default function Admin() {
           <div className="grid md:grid-cols-3 gap-6">
             <div className={`md:col-span-1 p-6 rounded-xl shadow-sm border self-start transition-all ${editingConfigId ? 'bg-orange-50 border-orange-200' : 'bg-white border-gray-200'}`}>
               <div className="flex justify-between items-center mb-4">
-                <h3 className="font-bold text-savoir-navy flex items-center gap-2">{editingConfigId ? <><Edit size={18} className="text-orange-500"/> Editar Turno</> : <><Plus size={18} className="text-savoir-gold"/> Cadastrar Turno</>}</h3>
+                <h3 className="font-bold text-folha-dark flex items-center gap-2">{editingConfigId ? <><Edit size={18} className="text-orange-500"/> Editar Turno</> : <><Plus size={18} className="text-folha-accent"/> Cadastrar Turno</>}</h3>
                 {editingConfigId && <button onClick={cancelarEdicaoConfig} className="text-xs text-red-500 font-bold hover:underline">Cancelar</button>}
               </div>
 
@@ -296,7 +296,7 @@ export default function Admin() {
                 {!isPsiFixo && (
                   <div>
                     <label className="block text-gray-600 font-bold mb-1">Profissional:</label>
-                    <select required className="w-full border p-2 rounded bg-white outline-none focus:border-savoir-gold disabled:opacity-50" disabled={editingConfigId !== null} value={formConfig.psicologa} onChange={e => setFormConfig({...formConfig, psicologa: e.target.value})}>
+                    <select required className="w-full border p-2 rounded bg-white outline-none focus:border-folha-accent disabled:opacity-50" disabled={editingConfigId !== null} value={formConfig.psicologa} onChange={e => setFormConfig({...formConfig, psicologa: e.target.value})}>
                       <option value="">Selecione...</option>
                       <option value="Psi. Lucas Barba">Psi. Lucas Barba</option>
                       <option value="Psi. Amanda Pierot">Psi. Amanda Pierot</option>
@@ -307,28 +307,28 @@ export default function Admin() {
                 )}
                 <div>
                   <label className="block text-gray-600 font-bold mb-1">Dia da Semana:</label>
-                  <select required className="w-full border p-2 rounded bg-white outline-none focus:border-savoir-gold" value={formConfig.dia_semana} onChange={e => setFormConfig({...formConfig, dia_semana: e.target.value})}>
+                  <select required className="w-full border p-2 rounded bg-white outline-none focus:border-folha-accent" value={formConfig.dia_semana} onChange={e => setFormConfig({...formConfig, dia_semana: e.target.value})}>
                     <option value="1">Segunda-feira</option><option value="2">Terça-feira</option><option value="3">Quarta-feira</option><option value="4">Quinta-feira</option><option value="5">Sexta-feira</option><option value="6">Sábado</option><option value="0">Domingo</option>
                   </select>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <div><label className="block text-gray-600 font-bold mb-1">Das:</label><input required type="time" className="w-full border p-2 rounded bg-white outline-none focus:border-savoir-gold" value={formConfig.hora_inicio} onChange={e => setFormConfig({...formConfig, hora_inicio: e.target.value})} /></div>
-                  <div><label className="block text-gray-600 font-bold mb-1">Até às:</label><input required type="time" className="w-full border p-2 rounded bg-white outline-none focus:border-savoir-gold" value={formConfig.hora_fim} onChange={e => setFormConfig({...formConfig, hora_fim: e.target.value})} /></div>
+                  <div><label className="block text-gray-600 font-bold mb-1">Das:</label><input required type="time" className="w-full border p-2 rounded bg-white outline-none focus:border-folha-accent" value={formConfig.hora_inicio} onChange={e => setFormConfig({...formConfig, hora_inicio: e.target.value})} /></div>
+                  <div><label className="block text-gray-600 font-bold mb-1">Até às:</label><input required type="time" className="w-full border p-2 rounded bg-white outline-none focus:border-folha-accent" value={formConfig.hora_fim} onChange={e => setFormConfig({...formConfig, hora_fim: e.target.value})} /></div>
                 </div>
-                <button type="submit" className={`w-full text-white font-bold py-3 rounded transition ${editingConfigId ? 'bg-orange-500 hover:bg-orange-600' : 'bg-savoir-navy hover:bg-savoir-gold'}`}>{editingConfigId ? 'Atualizar Turno' : 'Salvar Turno'}</button>
+                <button type="submit" className={`w-full text-white font-bold py-3 rounded transition ${editingConfigId ? 'bg-orange-500 hover:bg-orange-600' : 'bg-folha-dark hover:bg-folha-accent'}`}>{editingConfigId ? 'Atualizar Turno' : 'Salvar Turno'}</button>
               </form>
             </div>
 
             <div className="md:col-span-2">
-              <h3 className="font-bold text-savoir-navy mb-4 flex items-center gap-2"><Clock size={18} className="text-savoir-gold"/> Turnos Ativos</h3>
+              <h3 className="font-bold text-folha-dark mb-4 flex items-center gap-2"><Clock size={18} className="text-folha-accent"/> Turnos Ativos</h3>
               {loadingConfigs ? <p className="text-gray-500 p-6 bg-white rounded-xl shadow-sm text-center">Carregando horários...</p> : listaConfigsFiltrada.length === 0 ? <div className="text-center p-6 bg-white rounded-xl shadow-sm border border-dashed border-gray-300"><p className="text-gray-400">Nenhum turno cadastrado.</p></div> : (
                 <div className="grid gap-3">
                   {listaConfigsFiltrada.map((item) => (
                     <div key={item.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center hover:shadow-md transition">
                       <div>
-                        <p className="font-bold text-savoir-navy">{item.psicologa}</p>
+                        <p className="font-bold text-folha-dark">{item.psicologa}</p>
                         <div className="flex items-center gap-3 text-sm text-gray-600 mt-1">
-                          <span className="bg-savoir-light px-2 py-1 rounded text-savoir-gold font-bold">{nomesDias[item.dia_semana]}</span>
+                          <span className="bg-folha-light px-2 py-1 rounded text-folha-accent font-bold">{nomesDias[item.dia_semana]}</span>
                           <span className="flex items-center gap-1"><Clock size={14}/> {item.hora_inicio} às {item.hora_fim}</span>
                         </div>
                       </div>
@@ -347,17 +347,17 @@ export default function Admin() {
 
       {/* MODAL MANUAL */}
       {modalAgendaAberto && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-savoir-navy/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-folha-dark/80 backdrop-blur-sm">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 relative">
             <button onClick={() => setModalAgendaAberto(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-800"><X size={24}/></button>
-            <h2 className="text-2xl font-serif text-savoir-navy mb-6">{editingAgendamentoId ? 'Editar Agendamento' : 'Novo Agendamento'}</h2>
+            <h2 className="text-2xl font-serif text-folha-dark mb-6">{editingAgendamentoId ? 'Editar Agendamento' : 'Novo Agendamento'}</h2>
             <form onSubmit={handleSalvarAgendamentoManual} className="flex flex-col gap-4">
-              <div><label className="text-xs font-bold text-gray-500 uppercase">Paciente</label><input required type="text" className="w-full border-b border-gray-300 p-2 outline-none focus:border-savoir-gold bg-transparent" value={formManual.nome_paciente} onChange={e => setFormManual({...formManual, nome_paciente: e.target.value})} /></div>
-              <div><label className="text-xs font-bold text-gray-500 uppercase">WhatsApp</label><input required type="text" className="w-full border-b border-gray-300 p-2 outline-none focus:border-savoir-gold bg-transparent" value={formManual.telefone_paciente} onChange={e => setFormManual({...formManual, telefone_paciente: e.target.value})} /></div>
+              <div><label className="text-xs font-bold text-gray-500 uppercase">Paciente</label><input required type="text" className="w-full border-b border-gray-300 p-2 outline-none focus:border-folha-accent bg-transparent" value={formManual.nome_paciente} onChange={e => setFormManual({...formManual, nome_paciente: e.target.value})} /></div>
+              <div><label className="text-xs font-bold text-gray-500 uppercase">WhatsApp</label><input required type="text" className="w-full border-b border-gray-300 p-2 outline-none focus:border-folha-accent bg-transparent" value={formManual.telefone_paciente} onChange={e => setFormManual({...formManual, telefone_paciente: e.target.value})} /></div>
               {!isPsiFixo && (
                 <div>
                   <label className="text-xs font-bold text-gray-500 uppercase">Profissional</label>
-                  <select required className="w-full border-b border-gray-300 p-2 outline-none focus:border-savoir-gold bg-transparent" value={formManual.psicologa} onChange={e => setFormManual({...formManual, psicologa: e.target.value})}>
+                  <select required className="w-full border-b border-gray-300 p-2 outline-none focus:border-folha-accent bg-transparent" value={formManual.psicologa} onChange={e => setFormManual({...formManual, psicologa: e.target.value})}>
                     <option value="">Selecione...</option>
                     <option value="Psi. Lucas Barba">Psi. Lucas Barba</option>
                     <option value="Psi. Amanda Pierot">Psi. Amanda Pierot</option>
@@ -367,10 +367,10 @@ export default function Admin() {
                 </div>
               )}
               <div className="grid grid-cols-2 gap-4">
-                <div><label className="text-xs font-bold text-gray-500 uppercase">Data</label><input required type="date" className="w-full border-b border-gray-300 p-2 outline-none focus:border-savoir-gold bg-transparent" value={formManual.data_agendamento} onChange={e => setFormManual({...formManual, data_agendamento: e.target.value})} /></div>
-                <div><label className="text-xs font-bold text-gray-500 uppercase">Horário</label><input required type="time" className="w-full border-b border-gray-300 p-2 outline-none focus:border-savoir-gold bg-transparent" value={formManual.horario} onChange={e => setFormManual({...formManual, horario: e.target.value})} /></div>
+                <div><label className="text-xs font-bold text-gray-500 uppercase">Data</label><input required type="date" className="w-full border-b border-gray-300 p-2 outline-none focus:border-folha-accent bg-transparent" value={formManual.data_agendamento} onChange={e => setFormManual({...formManual, data_agendamento: e.target.value})} /></div>
+                <div><label className="text-xs font-bold text-gray-500 uppercase">Horário</label><input required type="time" className="w-full border-b border-gray-300 p-2 outline-none focus:border-folha-accent bg-transparent" value={formManual.horario} onChange={e => setFormManual({...formManual, horario: e.target.value})} /></div>
               </div>
-              <button type="submit" className="mt-4 bg-savoir-gold text-white font-bold py-3 rounded-lg hover:bg-[#b09268] transition">{editingAgendamentoId ? 'Salvar Alterações' : 'Confirmar Agendamento'}</button>
+              <button type="submit" className="mt-4 bg-folha-accent text-white font-bold py-3 rounded-lg hover:bg-[#A36636] transition">{editingAgendamentoId ? 'Salvar Alterações' : 'Confirmar Agendamento'}</button>
             </form>
           </div>
         </div>

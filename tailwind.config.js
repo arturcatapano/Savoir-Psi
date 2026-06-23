@@ -7,10 +7,10 @@ export default {
   theme: {
     extend: {
       colors: {
-        'savoir-navy': '#1B263B',   // Azul Marinho
-        'savoir-gold': '#C5A880',   // Dourado/Bege
-        'savoir-light': '#F4F1EA',  // Fundo Creme
-        'savoir-text': '#2D3436',   // Cinza Escuro
+        'folha-dark': '#4A5A43',   // Azul Marinho
+        'folha-accent': '#B77A4A',   // Dourado/Bege
+        'folha-light': '#F5F2EC',  // Fundo Creme
+        'folha-text': '#4A5A43',   // Cinza Escuro
       },
       fontFamily: {
         serif: ['Playfair Display', 'serif'],

@@ -155,41 +155,28 @@ export default function App() {
       abordagem: "Minha atuação é focada na saúde integral. Ofereço acolhimento seguro e livre de tabus para questões de sexualidade, distúrbios alimentares e saúde mental geral."
     },
     {
-      nome: "Psi. Amanda Pierot", crp: "06/122476", especialidade: "Psicanálise Lacaniana & Psicossomática", foto: "/amanda.jpeg", link: "https://wa.me/5511984805074",
-      sobre: "Sou Psicanalista Lacaniana, formada em 2014. Atendo o público adulto e pessoas da terceira idade. Tenho uma sólida formação clínica e hospitalar, com minha escuta sempre voltada ao sujeito do inconsciente.",
-      formacao: ["Formação em Psicanálise Lacaniana - Fac. de Psicanálise de Strasburgo (FR)", "Formação em Psicanálise pelo Centro de Estudos Psicanalítico (CEP)", "Formação em Psicossomática Psicanalítica - Inst. Sedes Sapientia", "Formação em Cardiologia e Cardiopatia - InCor (HCFMUSP)", "Especialista em Terapia do Luto (PUC-SP) e Psicologia Geriátrica (PUC-RS)"],
-      abordagem: "Trabalho com a Orientação Lacaniana. Meu foco não é apenas eliminar o sintoma, mas escutar a sua história de vida e os desejos inconscientes, tratando questões profundas como luto e doenças psicossomáticas."
-    },
-    {
       nome: "Psi. Alini Correia", crp: "06/153091", especialidade: "TCC, Neuropsicologia & Sexologia", foto: "/alini.jpeg", link: "https://wa.me/5511965029254",
       sobre: "Com 7 anos de experiência clínica, educacional e social. Minha trajetória é marcada por um olhar amplo e humanizado. Atendo crianças, adolescentes, adultos e casais.",
       formacao: ["Especialista em Sexologia Aplicada - Inst. Paulista de Sexualidade", "Formação em Neuropsicologia - FMU", "Graduação em Psicologia - Faculdade Anhanguera", "Experiência em Terapia de Casais e Saúde Sexual"],
       abordagem: "Terapia Cognitivo-Comportamental (TCC). Utilizo ferramentas práticas para transformar padrões de pensamento e comportamento. Trabalho também com identidade de gênero e fortalecimento de vínculos afetivos."
-    },
-    {
-      nome: "Psi. Karina Catapano", crp: "06/223358", especialidade: "Psicanálise & Psicologia Organizacional", foto: "/karina.jpg", link: "https://wa.me/5511962837380",
-      sobre: "Tenho 26 anos e sou apaixonada pelo ser humano. Minha atuação é híbrida e integrativa: sou Psicóloga Organizacional e Clínica. Acredito que não existe separação entre a 'pessoa' e o 'profissional'.",
-      formacao: ["Graduação em Psicologia - Universidade São Judas Tadeu (2022)", "Psicóloga Organizacional e Clínica", "Ênfase em Psicanálise"],
-      abordagem: "Psicanálise Integrativa. Utilizo a escuta terapêutica para tratar angústias e processos de autoconhecimento. No âmbito organizacional, aplico essa sensibilidade para humanizar relações de trabalho."
     }
   ]
 
   return (
-    <div className="min-h-screen flex flex-col relative bg-savoir-light font-sans text-savoir-text">
+    <div className="min-h-screen flex flex-col relative bg-folha-light font-sans text-folha-text">
       
-      <nav className="bg-savoir-navy/90 backdrop-blur-md text-white py-4 px-6 fixed w-full z-40 shadow-lg transition-all duration-300">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <div className="text-2xl font-serif italic tracking-widest text-savoir-gold cursor-pointer hover:scale-105 transition-transform">Savoir Psi</div>
+      <nav className="bg-folha-dark/90 backdrop-blur-md text-white py-4 px-6 fixed w-full z-40 shadow-lg transition-all duration-300">
+        <div className="max-w-6xl mx-auto flex justify-center items-center relative min-h-[40px] py-1">
           <div className="hidden md:flex gap-8 text-sm uppercase tracking-wide">
-            <a href="#home" className="hover:text-savoir-gold transition relative group">Início <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-savoir-gold transition-all group-hover:w-full"></span></a>
-            <a href="#sobre" className="hover:text-savoir-gold transition relative group">A Clínica <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-savoir-gold transition-all group-hover:w-full"></span></a>
-            <a href="#equipe" className="hover:text-savoir-gold transition relative group">Profissionais <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-savoir-gold transition-all group-hover:w-full"></span></a>
-            <a href="#localizacao" className="hover:text-savoir-gold transition relative group">Localização <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-savoir-gold transition-all group-hover:w-full"></span></a>
+            <a href="#home" className="hover:text-folha-accent transition relative group">Início <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-folha-accent transition-all group-hover:w-full"></span></a>
+            <a href="#sobre" className="hover:text-folha-accent transition relative group">A Clínica <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-folha-accent transition-all group-hover:w-full"></span></a>
+            <a href="#equipe" className="hover:text-folha-accent transition relative group">Profissionais <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-folha-accent transition-all group-hover:w-full"></span></a>
+            <a href="#localizacao" className="hover:text-folha-accent transition relative group">Localização <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-folha-accent transition-all group-hover:w-full"></span></a>
           </div>
-          <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-savoir-gold active:scale-90 transition">{menuOpen ? <X /> : <Menu />}</button>
+          <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden absolute right-4 text-folha-accent active:scale-90 transition">{menuOpen ? <X /> : <Menu />}</button>
         </div>
         {menuOpen && (
-          <div className="md:hidden absolute top-16 left-0 w-full bg-savoir-navy border-t border-gray-700 flex flex-col p-4 gap-4 text-center shadow-xl animate-fade-in">
+          <div className="md:hidden absolute top-16 left-0 w-full bg-folha-dark border-t border-gray-700 flex flex-col p-4 gap-4 text-center shadow-xl animate-fade-in">
             <a href="#home" onClick={() => setMenuOpen(false)}>Início</a>
             <a href="#sobre" onClick={() => setMenuOpen(false)}>A Clínica</a>
             <a href="#equipe" onClick={() => setMenuOpen(false)}>Profissionais</a>
@@ -198,25 +185,28 @@ export default function App() {
         )}
       </nav>
 
-      <section id="home" className="relative h-screen flex items-center justify-center bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80')"}}>
-        <div className="absolute inset-0 bg-savoir-navy/70"></div>
-        <div className="relative z-10 text-center text-white px-4 max-w-4xl animate-fade-in-up">
-          <p className="text-savoir-gold uppercase tracking-[0.2em] text-sm mb-4 font-bold">Psicologia Clínica Integrada</p>
-          <h1 className="text-5xl md:text-7xl mb-6 leading-tight font-serif">Escuta, elaboração <br/> <span className="italic text-savoir-gold">e transformação.</span></h1>
-          <button onClick={() => document.getElementById('equipe').scrollIntoView({ behavior: 'smooth' })} className="btn-gold inline-block mt-8 cursor-pointer active:scale-95 transform transition duration-150">Conheça Nossa Equipe</button>
+      <section id="home" className="relative h-screen flex items-center justify-center bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&q=80')"}}>
+        <div className="absolute inset-0 bg-folha-dark/70"></div>
+        <div className="relative z-10 text-center text-white px-4 max-w-4xl animate-fade-in-up flex flex-col items-center">
+          <img src="/logo.png" alt="Folha da Alma" className="h-48 md:h-64 mb-8 drop-shadow-2xl hover:scale-105 transition-transform duration-700" />
+          <p className="text-[#DCCDB7] uppercase tracking-[0.2em] text-sm mb-4 font-bold">Psicologia Clínica Integrada</p>
+          <h1 className="text-5xl md:text-7xl mb-6 leading-tight font-serif">Cuidar da sua mente <br/> <span className="italic text-[#DCCDB7]">é nutrir a sua vida.</span></h1>
+          <button onClick={() => document.getElementById('equipe').scrollIntoView({ behavior: 'smooth' })} className="btn-accent inline-block mt-8 cursor-pointer active:scale-95 transform transition duration-150">Conheça Nossa Equipe</button>
         </div>
       </section>
 
       <section id="sobre" className="py-20 px-6 bg-white">
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 className="text-4xl text-savoir-navy mb-6 font-serif">O Conceito Savoir</h2>
-            <div className="w-20 h-1 bg-savoir-gold mb-6"></div>
-            <p className="text-gray-600 leading-relaxed mb-4">"Savoir", do francês, significa <strong>Saber</strong>. Somos uma equipe multidisciplinar unida pelo propósito de oferecer um espaço de escuta qualificada e transformação.</p>
+            <h2 className="text-4xl text-folha-dark mb-6 font-serif">O Conceito Folha da Alma</h2>
+            <div className="w-20 h-1 bg-folha-accent mb-6"></div>
+            <p className="text-gray-600 leading-relaxed mb-4">Na <strong>Folha da Alma</strong>, Somos uma equipe multidisciplinar unida pelo propósito de oferecer um espaço de escuta qualificada e transformação. <br/>
+            <br/>
+            Afinal, cuidar da mente é plantar hoje as sementes de uma vida mais leve.</p>
             <div className="grid grid-cols-3 gap-4 mt-8">
               {[{ icon: Brain, label: "Autonomia" }, { icon: Heart, label: "Acolhimento" }, { icon: Users, label: "Vínculo" }].map((item, i) => (
-                <div key={i} className="text-center p-4 bg-savoir-light rounded-lg hover:shadow-md hover:-translate-y-1 transition duration-300 cursor-default">
-                  <item.icon className="mx-auto text-savoir-navy mb-2" /><span className="text-xs font-bold uppercase">{item.label}</span>
+                <div key={i} className="text-center p-4 bg-folha-light rounded-lg hover:shadow-md hover:-translate-y-1 transition duration-300 cursor-default">
+                  <item.icon className="mx-auto text-folha-dark mb-2" /><span className="text-xs font-bold uppercase">{item.label}</span>
                 </div>
               ))}
             </div>
@@ -225,23 +215,45 @@ export default function App() {
         </div>
       </section>
 
-      <section id="equipe" className="py-20 px-6 bg-savoir-light">
+      <section id="equipe" className="py-20 px-6 bg-folha-light">
         <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-4xl text-savoir-navy mb-12 font-serif">Nossos Especialistas</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mx-auto">
+          <h2 className="text-4xl text-folha-dark mb-12 font-serif">Nossos Especialistas</h2>
+          <div className="grid grid-cols-1 gap-8 mx-auto max-w-4xl justify-center">
             {equipe.map((psi, index) => (
-              <div key={index} className="bg-white rounded-xl overflow-hidden shadow-lg hover:-translate-y-2 transition duration-300 group flex flex-col h-full border border-gray-100">
-                <div className="h-64 overflow-hidden relative">
-                   <div className="absolute inset-0 bg-savoir-navy/0 group-hover:bg-savoir-navy/20 transition duration-500 z-10"></div>
-                   <img src={psi.foto} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500" />
+              <div key={index} className="bg-white rounded-xl overflow-hidden shadow-lg hover:-translate-y-2 transition duration-300 group flex flex-col md:flex-row h-full border border-gray-100">
+                <div className="h-72 md:h-auto md:w-5/12 overflow-hidden relative shrink-0">
+                   <div className="absolute inset-0 bg-folha-dark/0 group-hover:bg-folha-dark/20 transition duration-500 z-10"></div>
+                   <img src={psi.foto} className="w-full h-full object-cover object-top grayscale group-hover:grayscale-0 transition duration-500" />
                 </div>
-                <div className="p-6 text-left relative flex-1 flex flex-col">
-                  <h3 className="text-lg text-savoir-navy mb-1 font-serif font-bold leading-tight">{psi.nome}</h3>
-                  <p className="text-savoir-gold font-bold text-[10px] uppercase mb-4 tracking-wide min-h-[30px] flex items-center">{psi.especialidade}</p>
-                  <p className="text-gray-500 text-xs mb-6 line-clamp-4 flex-1 leading-relaxed">{psi.sobre}</p>
-                  <button onClick={() => setSelectedPsi(psi)} className="w-full mt-auto border border-savoir-navy text-savoir-navy py-2 rounded text-sm hover:bg-savoir-navy hover:text-white transition flex items-center justify-center gap-2 font-bold active:scale-95">
-                    Ver Perfil & Agendar <ChevronRight size={14} />
-                  </button>
+                <div className="p-8 text-left relative flex-1 flex flex-col">
+                  <div className="mb-4">
+                    <h3 className="text-2xl text-folha-dark mb-1 font-serif font-bold leading-tight">{psi.nome}</h3>
+                    <p className="text-folha-accent font-bold text-[10px] uppercase tracking-wide flex items-center">CRP {psi.crp} | {psi.especialidade}</p>
+                  </div>
+                  
+                  <div className="flex-1">
+                    <div className="mb-4">
+                      <p className="text-gray-600 leading-relaxed text-sm">{psi.sobre}</p>
+                    </div>
+                    
+                    <div className="mb-4">
+                      <h4 className="flex items-center gap-2 text-folha-dark font-bold text-sm mb-1"><Brain className="text-folha-accent" size={16}/> Abordagem</h4>
+                      <p className="text-gray-600 italic text-sm border-l-2 border-folha-accent pl-3">"{psi.abordagem}"</p>
+                    </div>
+                    
+                    <div className="mb-6">
+                      <h4 className="flex items-center gap-2 text-folha-dark font-bold text-sm mb-2"><GraduationCap className="text-folha-accent" size={16}/> Formação</h4>
+                      <ul className="space-y-1">
+                        {psi.formacao.map((item, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-gray-600 text-xs"><div className="w-1.5 h-1.5 rounded-full bg-folha-accent mt-1 shrink-0"></div>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  <a href={psi.link} target="_blank" rel="noopener noreferrer" className="w-full mt-auto bg-green-500 text-white py-3 rounded text-sm hover:bg-green-600 transition flex items-center justify-center gap-2 font-bold shadow-md hover:shadow-lg active:scale-95">
+                    <MessageCircle size={18} /> Falar no WhatsApp
+                  </a>
                 </div>
               </div>
             ))}
@@ -252,9 +264,9 @@ export default function App() {
       <section id="localizacao" className="py-20 px-6 bg-white border-t border-gray-100">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl text-savoir-navy mb-4 font-serif">Onde Estamos</h2>
-            <div className="w-20 h-1 bg-savoir-gold mx-auto mb-6"></div>
-            <p className="text-gray-600 flex items-center justify-center gap-2"><MapPin className="text-savoir-gold" size={20} /> Av. Tucuruvi, 654 - São Paulo, SP</p>
+            <h2 className="text-4xl text-folha-dark mb-4 font-serif">Onde Estamos</h2>
+            <div className="w-20 h-1 bg-folha-accent mx-auto mb-6"></div>
+            <p className="text-gray-600 flex items-center justify-center gap-2"><MapPin className="text-folha-accent" size={20} /> Av. Tucuruvi, 654 - São Paulo, SP</p>
           </div>
           <div className="w-full h-96 rounded-2xl overflow-hidden shadow-lg border border-gray-200">
             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3659.1865910260655!2d-46.60621402377227!3d-23.492003858963593!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce5961ec909ba9%3A0xcda6b08e2ef87895!2sAv.%20Tucuruvi%2C%20654%20-%20Tucuruvi%2C%20S%C3%A3o%20Paulo%20-%20SP%2C%2002304-001!5e0!3m2!1spt-BR!2sbr!4v1708453489123!5m2!1spt-BR!2sbr" width="100%" height="100%" style={{ border: 0 }} allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
@@ -262,85 +274,46 @@ export default function App() {
         </div>
       </section>
 
-      <footer className="bg-savoir-navy text-white py-12 px-6 mt-auto">
+      <footer className="bg-folha-dark text-white py-12 px-6 mt-auto">
         <div className="max-w-6xl mx-auto text-center">
-            <h2 className="text-2xl font-serif italic text-savoir-gold mb-4">Savoir Psi</h2>
-            <p className="opacity-70 text-sm">Escuta, elaboração e transformação.</p>
+            <img src="/logo.png" alt="Folha da Alma" className="h-20 mx-auto mb-4" />
+            <p className="opacity-70 text-sm">Cuidar da sua mente é nutrir a sua vida.</p>
         </div>
       </footer>
 
       {/* MODAL DE AGENDA DO PACIENTE */}
       {selectedPsi && (
         <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`}>
-          <div className="absolute inset-0 bg-savoir-navy/90 backdrop-blur-sm" onClick={handleCloseModal}></div>
+          <div className="absolute inset-0 bg-folha-dark/90 backdrop-blur-sm" onClick={handleCloseModal}></div>
 
           <div className={`bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative z-10 flex flex-col md:flex-row ${isClosing ? 'animate-slide-down' : 'animate-slide-up'}`}>
             <button onClick={handleCloseModal} className="absolute top-4 right-4 bg-white/80 p-2 rounded-full hover:bg-gray-100 z-20 text-gray-800 transition active:scale-90 shadow-sm"><X size={24} /></button>
 
-            <div className="md:w-5/12 bg-savoir-light p-6 flex flex-col items-center border-r border-gray-100">
+            <div className="md:w-5/12 bg-folha-light p-6 flex flex-col items-center border-r border-gray-100">
               <div className="w-24 h-24 rounded-full overflow-hidden mb-4 border-4 border-white shadow-lg shrink-0">
-                <img src={selectedPsi.foto} className="w-full h-full object-cover" />
+                <img src={selectedPsi.foto} className="w-full h-full object-cover object-top" />
               </div>
-              <h3 className="text-xl font-serif text-savoir-navy mb-1 leading-tight text-center">{selectedPsi.nome}</h3>
+              <h3 className="text-xl font-serif text-folha-dark mb-1 leading-tight text-center">{selectedPsi.nome}</h3>
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-6">CRP {selectedPsi.crp}</p>
               
-              <div className="w-full bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex-1">
-                <h4 className="font-bold text-savoir-navy mb-4 flex items-center gap-2 text-sm justify-center"><Calendar size={16} className="text-savoir-gold"/> Agendar Sessão</h4>
-
-                {statusAgenda === 'success' ? (
-                  <div className="text-center py-6 animate-fade-in text-green-600 h-full flex flex-col justify-center">
-                    <CheckCircle size={40} className="mx-auto mb-2" />
-                    <p className="font-bold text-sm">Horário Reservado!</p>
-                    <p className="text-xs text-gray-500 mt-1">A clínica confirmará via WhatsApp.</p>
-                  </div>
-                ) : (
-                  <form onSubmit={handleAgendar} className="flex flex-col gap-3 text-left">
-                    <input required type="text" placeholder="Seu Nome Completo" className="w-full p-2 text-sm border rounded bg-gray-50 focus:border-savoir-gold focus:outline-none transition" value={formAgenda.nome} onChange={e => setFormAgenda({...formAgenda, nome: e.target.value})} />
-                    <input required type="tel" placeholder="WhatsApp (Ex: 11999999999)" className="w-full p-2 text-sm border rounded bg-gray-50 focus:border-savoir-gold focus:outline-none transition" value={formAgenda.telefone} onChange={e => setFormAgenda({...formAgenda, telefone: e.target.value})} />
-                    
-                    <div className="relative">
-                      <input required type="date" min={dataMinima} className="w-full p-2 text-sm border rounded bg-gray-50 focus:border-savoir-gold focus:outline-none text-gray-600 transition" value={formAgenda.data} onChange={e => setFormAgenda({...formAgenda, data: e.target.value})} />
-                    </div>
-                    
-                    <div className="mt-2 min-h-[100px] border border-gray-100 rounded-lg p-3 bg-gray-50/50">
-                      <label className="text-xs font-bold text-gray-500 uppercase flex items-center gap-1 mb-2"><Clock size={12}/> Horários Disponíveis</label>
-                      
-                      {!formAgenda.data ? (
-                        <p className="text-xs text-gray-400 text-center italic py-4">Selecione uma data acima.</p>
-                      ) : statusHorarios === 'loading' ? (
-                        <p className="text-xs text-savoir-gold text-center font-bold py-4 animate-pulse">Buscando agenda...</p>
-                      ) : horariosDisponiveis.length === 0 ? (
-                        <p className="text-xs text-red-400 text-center py-4 bg-red-50 rounded border border-red-100">Não há horários neste dia.</p>
-                      ) : (
-                        <div className="grid grid-cols-3 gap-2 max-h-[140px] overflow-y-auto custom-scrollbar pr-1">
-                          {horariosDisponiveis.map((hora) => (
-                            <button
-                              key={hora} type="button" onClick={() => setFormAgenda({...formAgenda, horario: hora})}
-                              className={`py-2 px-1 text-xs font-bold rounded border transition-all ${formAgenda.horario === hora ? 'bg-savoir-gold text-white border-savoir-gold shadow-md transform scale-105' : 'bg-white text-savoir-navy border-gray-200 hover:border-savoir-gold hover:text-savoir-gold'}`}
-                            >
-                              {hora}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    <button type="submit" disabled={statusAgenda === 'loading' || !formAgenda.horario} className="w-full bg-savoir-navy text-white py-3 rounded text-sm font-bold tracking-wider hover:bg-savoir-gold transition mt-2 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center">
-                      {statusAgenda === 'loading' ? 'Processando...' : 'Confirmar Horário'}
-                    </button>
-                  </form>
-                )}
+              <div className="w-full bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex-1 flex flex-col justify-center items-center text-center">
+                <MessageCircle size={40} className="text-green-500 mb-4" />
+                <h4 className="font-bold text-folha-dark mb-2 text-lg">Agendar Sessão</h4>
+                <p className="text-sm text-gray-500 mb-6">Entre em contato diretamente via WhatsApp para agendar seu horário.</p>
+                <a href={selectedPsi.link} target="_blank" rel="noopener noreferrer" className="w-full bg-green-500 text-white py-3 rounded text-sm font-bold tracking-wider hover:bg-green-600 transition flex justify-center items-center gap-2 shadow-md hover:shadow-lg">
+                  <MessageCircle size={18} /> Falar no WhatsApp
+                </a>
               </div>
             </div>
 
             <div className="md:w-7/12 p-8 overflow-y-auto custom-scrollbar bg-white">
-              <div className="mb-6"><h4 className="flex items-center gap-2 text-savoir-navy font-bold text-lg mb-2 font-serif"><Brain className="text-savoir-gold" size={20}/> Sobre o Profissional</h4><p className="text-gray-600 leading-relaxed text-sm">{selectedPsi.sobre}</p></div>
-              <div className="mb-6"><h4 className="flex items-center gap-2 text-savoir-navy font-bold text-lg mb-2 font-serif"><BookOpen className="text-savoir-gold" size={20}/> Abordagem Clínica</h4><div className="bg-savoir-light/50 p-4 rounded-lg border-l-4 border-savoir-gold"><p className="text-gray-700 italic text-sm">"{selectedPsi.abordagem}"</p></div></div>
+              <div className="mb-6"><h4 className="flex items-center gap-2 text-folha-dark font-bold text-lg mb-2 font-serif"><Brain className="text-folha-accent" size={20}/> Sobre o Profissional</h4><p className="text-gray-600 leading-relaxed text-sm">{selectedPsi.sobre}</p></div>
+              <div className="mb-6"><h4 className="flex items-center gap-2 text-folha-dark font-bold text-lg mb-2 font-serif"><BookOpen className="text-folha-accent" size={20}/> Abordagem Clínica</h4><div className="bg-folha-light/50 p-4 rounded-lg border-l-4 border-folha-accent"><p className="text-gray-700 italic text-sm">"{selectedPsi.abordagem}"</p></div></div>
               <div>
-                <h4 className="flex items-center gap-2 text-savoir-navy font-bold text-lg mb-3 font-serif"><GraduationCap className="text-savoir-gold" size={20}/> Formação Acadêmica</h4>
+                <h4 className="flex items-center gap-2 text-folha-dark font-bold text-lg mb-3 font-serif"><GraduationCap className="text-folha-accent" size={20}/> Formação Acadêmica</h4>
                 <ul className="space-y-2">
                   {selectedPsi.formacao.map((item, idx) => (
-                    <li key={idx} className="flex items-start gap-3 text-gray-600 text-sm border-b border-gray-100 pb-2 last:border-0"><div className="w-1.5 h-1.5 rounded-full bg-savoir-gold mt-1.5 shrink-0"></div>{item}</li>
+                    <li key={idx} className="flex items-start gap-3 text-gray-600 text-sm border-b border-gray-100 pb-2 last:border-0"><div className="w-1.5 h-1.5 rounded-full bg-folha-accent mt-1.5 shrink-0"></div>{item}</li>
                   ))}
                 </ul>
               </div>
