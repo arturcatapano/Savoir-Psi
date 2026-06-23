@@ -277,7 +277,8 @@ export default function App() {
       <footer className="bg-folha-dark text-white py-12 px-6 mt-auto">
         <div className="max-w-6xl mx-auto text-center">
             <img src="/logo.png" alt="Folha da Alma" className="h-20 mx-auto mb-4" />
-            <p className="opacity-70 text-sm">Cuidar da sua mente é nutrir a sua vida.</p>
+            <p className="opacity-70 text-sm">Cuidar da sua mente é nutrir a sua vida.<br/>
+            36.230.925/0001-76</p>
         </div>
       </footer>
 
